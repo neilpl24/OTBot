@@ -13,7 +13,7 @@ This is extremely important because the NHL live data API is in this format: /ap
 
 The bot is able to loop through a list of URLs and now has a plethora of live data to work with. The live API the NHL uses is very up to date and has some really cool features that I hopefully can use to add some updates to this bot. Here is an example of some of the live data JSON objects in one of today's (03/22/2021) matchups, which features the Carolina Hurricanes and the Columbus Blue Jackets. 
 
-![img](https://imgur.com/6sDUAfA.jpg) ![img](https://imgur.com/2Zc89ad.png)
+![img](https://imgur.com/6sDUAfA.jpg) ![img](https://imgur.com/2Zc89ads=200.png)
 
 At the time of these screenshots, the Hurricanes were up 1-0 and the game was in the first intermission. We see here that our API data reflects that.
 
