@@ -48,10 +48,12 @@ if(profileData == undefined) {
 <img src="https://imgur.com/N3w7Y0L.png" width="500">
 
 If I try to run the !ot command again, I will be notified by the bot that I have already signed up. This handles a potential error.
+
 ![](https://media.giphy.com/media/wjsFMD02n0RdrypN9j/giphy.gif)
 
 ### !record
 We will get to see the !record command in its proper form later on in this README, but it does contain a cool error handling feature that can direct users who have not done the !ot command to sign up for OTBot. Here is a little demo.
+
 ![](https://media.giphy.com/media/YAkRFQxuVm4tVwni5y/giphy.gif)
 
 ## Demonstration
