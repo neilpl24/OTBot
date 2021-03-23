@@ -1,7 +1,7 @@
 # OTBot
-OT Bot is a discord bot designed to enhance the exciting experience of NHL’s coveted 3 on 3 overtime. After an NHL game has reached the conclusion of regulation in a tie, OT Bot will notify participating users with a message saying that they have 5 minutes to lock in their pick for overtime. The bot will also provide a streaming link to the game in question. A correct pick will provide a 1.5 points and a win to the winner on the server’s respective leaderboard, whereas an incorrect pick will subtract a point and add a loss.
+OT Bot is a discord bot designed to enhance the exciting experience of NHL’s coveted 3 on 3 overtime. After an NHL game has reached the conclusion of regulation in a tie, OT Bot will notify participating users with a message saying that they have 5 minutes to lock in their pick for overtime. The bot will also provide a streaming link to the game in question. A correct pick will provide 1.5 points and a win to the winner on the server’s respective leaderboard, whereas an incorrect pick will subtract a point and add a loss.
 ## Fetching NHL Data
-Before I dive in, I would like to give a special thanks to Chris Beardy for directing me to several NHL API links and projects and helping me navigate through the lengthy directories. 
+Before I dive in, I would like to give a special thanks to Chris Beardy for directing me to several NHL API links and projects and helping me navigate through the lengthy directories. This sped up the experimentation process and allowed me to dive straight in!
 
 Also, feel free to skip this section, this is just me going off on a tangent about the NHL's API and how fun it was to work with it.
 
@@ -11,7 +11,7 @@ The NHL keeps its scheduling data for each game on this link: https://statsapi.w
 
 This is extremely important because the NHL live data API is in this format: /api/v1/game/**gameIDgoeshere**/feed/live?site=en_nhl. 
 
-The bot is able to loop through a list of URLs and now has a plethora of live data to work with. The live API the NHL uses is very up to date and has some really cool features that I hopefully can use to add some updates to this bot. Here is an example of some of the live data JSON objects in one of today's (03/22/2021) matchups, which features the Carolina Hurricanes and the Columbus Blue Jackets. 
+The bot can loop through a list of URLs and now has a plethora of live data to work with. The live API the NHL uses is very up-to-date and has some cool features that I hopefully can use to add some updates to this bot. Here is an example of some of the live data JSON objects in one of today's (03/22/2021) matchups, which features the Carolina Hurricanes and the Columbus Blue Jackets. 
 
 <img src="https://imgur.com/6sDUAfA.jpg" width="500"><img src="https://imgur.com/2Zc89ad.png" width="500">
 
@@ -28,7 +28,7 @@ let runBot = setInterval(function(){
 ## Commands
 OT Bot has a few commands that run using a message event listener while it simultaneously fetches data from ongoing games. 
 ### !ot
-In order to keep track of users and their record of picks, I added an external server in MongoDB and linked it to OTBot. I will dive deeper into this process and how it gets updated in the demo section. Huge shoutout to [CodeLyon](https://www.youtube.com/watch?v=8no3SktqagY) for the tutorial on the setup.
+To keep track of users and their record of picks, I added an external server in MongoDB and linked it to OTBot. I will dive deeper into this process and how it gets updated in the demo section. Huge shoutout to [CodeLyon](https://www.youtube.com/watch?v=8no3SktqagY) for the tutorial on the setup.
 
 The !ot command signs a user up to participate in the OT picks challenge by creating an ID for them in the MongoDB database. Here is a demonstration.
 
@@ -55,7 +55,7 @@ We will get to see the !record command in its proper form later on in this READM
 ![](https://media.giphy.com/media/YAkRFQxuVm4tVwni5y/giphy.gif)
 
 ## Demonstration
-Now that I've laid down the foundations of the bot, I am going to go through a real simulation of it. Today's (03/22/2021) overtime game I am going to use will be the New York Islanders 2-1 win over the Philadelphia Flyers.
+Now that I've laid down the foundations of the bot, I am going to go through a real simulation of it. Today's (03/22/2021) overtime game I am going to use will be the New York Islanders' 2-1 win over the Philadelphia Flyers.
 
 Once any game goes to overtime, OTBot will send a message in the read-only overtime channel as seen below. As you can see, the bot reacts to the message with two checkmarks, which serve as options for which team to pick.
 
