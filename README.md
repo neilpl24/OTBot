@@ -45,7 +45,7 @@ if(profileData == undefined) {
    wins: 0,
    losses: 0
 ``` 
-![img](https://imgur.com/a/9JDwqwH.png)
+<img src="https://imgur.com/N3w7Y0L.png" width="500">
 
 If I try to run the !ot command again, I will be notified by the bot that I have already signed up. This handles a potential error.
 ![](https://media.giphy.com/media/wjsFMD02n0RdrypN9j/giphy.gif)
