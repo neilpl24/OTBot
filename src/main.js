@@ -1,6 +1,8 @@
 const scheduleUrl = "https://statsapi.web.nhl.com/api/v1/schedule";
 const fetch = require("node-fetch");
+// otGames prevents the bot from sending duplicate messages about an overtime game.
 let otGames = [];
+// Keeps track of who got their picks right or wrong.
 let correct = [];
 let incorrect = [];
 const mongoose = require("mongoose");
@@ -32,7 +34,7 @@ let runBot = setInterval(function(){
  getSchedule()}, 3000);
 
 
-
+// This function is the bulk of the OTBot process. It is responsible for all of the fetching and transporting of the game data.
 async function getSchedule(){
     const response = await fetch(scheduleUrl);
     const schedule = await response.json();
@@ -56,7 +58,9 @@ async function getSchedule(){
     }
     // Scans all NHL games for overtime
     for(let i=0; i<gameDataArray.length; i++) {
+        // This is the channel the bot will send messages in.
         const channel = bot.channels.cache.get('819792691511558184');
+        // Determines if a game is in overtime or not.
         if((gameDataArray[i].liveData.linescore.currentPeriod == 3 || gameDataArray[i].liveData.linescore.currentPeriod == 4)&& gameDataArray[i].liveData.linescore.intermissionInfo.inIntermission) {
             if(!otGames.includes(gameDataArray[i].gameData.game.pk)) {
                 let awayUsers = [];
@@ -77,6 +81,7 @@ async function getSchedule(){
                                 break;
                             }
                         }
+                        // Collects reactions and pushes userIDs to their respective arrays.
                         if(homeID.reactions.resolve('✅').users != undefined) {
                             homeID.reactions.resolve('✅').users.fetch({limit:100}).then(users => {
                                 users.forEach(function(value, key) {
@@ -99,8 +104,10 @@ async function getSchedule(){
                 async function getWin() {
                     const res = await fetch(gameUrls[i]);
                     const gameEnded = await res.json();
+                    // Continues the getWin() function once the game ends.
                     if(gameEnded.gameData.status.abstractGameState == "Final" && otGames.includes(gameEnded.gameData.game.pk)) {
                         clearInterval(over);
+                        // Alerts the users to the final score and that their data has been logged.
                         if(gameEnded.liveData.linescore.teams.away.goals >= gameEnded.liveData.linescore.teams.home.goals) {
                             channel.send(`The ${gameEnded.liveData.linescore.teams.away.team.name} have beaten the ${gameEnded.liveData.linescore.teams.home.team.name} by a score of ${gameEnded.liveData.linescore.teams.away.goals} to ${gameEnded.liveData.linescore.teams.home.goals}! I am now logging everyone's scores. You can check using the records command.`);
                             awayUsers.forEach(user => {
@@ -130,6 +137,7 @@ async function getSchedule(){
 const profileModel = require("../models/profileSchema")
 // Message event listener
 bot.on('message', message => {
+    // Autogenerates reactions for the overtime game.
     if(message.content.includes(`GET READY...IT'S TIME!!!!`)) {
         message.react('✅');
         message.react('☑️');
@@ -142,9 +150,11 @@ bot.on('message', message => {
         if(!message.content.startsWith(prefix)) {
             return;
         }
+        //!ot command
         if(command === "ot") {
             let profileData = await profileModel.findOne({userID: message.author.id});
             let profile;
+            // Creates a profile for a user if they are not in the MongoDB server.
             if(profileData == undefined) {
                 profile = profileModel.create({
                 userID: message.author.id,
@@ -175,7 +185,7 @@ bot.on('message', message => {
 });
 // This function takes our user data and uploads it to the MongoDB server.
 function updateData() {
-    console.log("Logging Data");
+    // Creates a map for points, wins, and losses each.
     let map = new Map();
     let winMap = new Map();
     let loseMap = new Map();
@@ -210,10 +220,11 @@ function updateData() {
             loseMap.set(user, 1);
         }
     })
-
+    // Converts each map to an Array of key-value pair objects.
     let values = Array.from(map, ([name, value]) => ({ name, value }));
     let winValues = Array.from(winMap, ([name, value]) => ({ name, value }));
     let loseValues = Array.from(loseMap, ([name, value]) => ({ name, value }));
+    // This function updates each participating user profile in the MongoDB server.
     async function update() {
         for(let i=0; i<values.length; i++) {
             const updateProfile = await profileModel.findOneAndUpdate({
@@ -225,27 +236,27 @@ function updateData() {
                 },
             });
         }
-    for(let i=0; i<winValues.length; i++) {
-        const updateProfile = await profileModel.findOneAndUpdate({
-            userID: winValues[i].name,
-        },
-        {
-            $inc: {
-                wins: winValues[i].value,
+        for(let i=0; i<winValues.length; i++) {
+            const updateProfile = await profileModel.findOneAndUpdate({
+                userID: winValues[i].name,
             },
-        });
-    }
-    for(let i=0; i<loseValues.length; i++) {
-        const updateProfile = await profileModel.findOneAndUpdate({
-            userID: loseValues[i].name,
-        },
-        {
-            $inc: {
-                losses: loseValues[i].value,
+            {
+                $inc: {
+                    wins: winValues[i].value,
+                },
+            });
+        }
+        for(let i=0; i<loseValues.length; i++) {
+            const updateProfile = await profileModel.findOneAndUpdate({
+                userID: loseValues[i].name,
             },
-        });
+            {
+                $inc: {
+                    losses: loseValues[i].value,
+                },
+            });
+        }
     }
-}
     update();
 }
 bot.login(process.env.DISCORDJS_BOT_TOKEN);
