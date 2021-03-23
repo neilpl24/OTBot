@@ -152,12 +152,8 @@ bot.on('message', message => {
                 wins: 0,
                 losses: 0
                 }).then(() =>{
-                    try{
                         message.channel.send(`${message.author} has signed up for OTBot!`);
                         profile.save();
-                    } catch(err) {
-                        
-                    }
                 });
             } else {
                 message.channel.send(`You have already signed up for OTBot!`);
