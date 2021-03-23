@@ -51,7 +51,40 @@ If I try to run the !ot command again, I will be notified by the bot that I have
 ![](https://media.giphy.com/media/wjsFMD02n0RdrypN9j/giphy.gif)
 
 ### !record
+We will get to see the !record command in its proper form later on in this README, but it does contain a cool error handling feature that can direct users who have not done the !ot command to sign up for OTBot. Here is a little demo.
 
 
+
+## Demonstration
+Now that I've laid down the foundations of the bot, I am going to go through a real simulation of it. Today's (03/22/2021) overtime game I am going to use will be the New York Islanders 2-1 win over the Philadelphia Flyers.
+
+Once any game goes to overtime, OTBot will send a message in the read-only overtime channel as seen below. As you can see, the bot reacts to the message with two checkmarks, which serve as options for which team to pick.
+
+<img src="https://imgur.com/Ws0r2Fc.png" width="500"><img src="https://imgur.com/9sRL41l.jpg" width="500">
+
+In this simulation, I chose the Flyers. Another user in the test server chose the Islanders. Due to the delay between the start of the 3rd period intermission and message sent, users have two minutes to put their picks in instead of the five minute intermission period. While we wait for the game to end, this is what is happening behind the scenes.
+```javascript
+ let over = setInterval(function(){
+     getWin()}, 10000);
+     async function getWin() {
+          const res = await fetch(gameUrls[i]);
+          const gameEnded = await res.json();
+          if(gameEnded.gameData.status.abstractGameState == "Final" && otGames.includes(gameEnded.gameData.game.pk)) {
+                   clearInterval(over);
+                   // extra stuff down here
+```
+
+OTBot fetches the game data every 10 seconds until the requirements for a game to end are fulfilled. In this case, the getWin() function continued once [Anthony Beauvillier](https://streamable.com/2tnm17) scored a beautiful wraparound goal to win the game in overtime for the Islanders ([Thanks u/AnthonyCostantini](https://www.reddit.com/r/hockey/comments/mb3guq/taub_anthony_beauvillier_wins_it_in_ot_with_a/)). As soon as this happens, OTBot sends a message and the users who put their picks in have their records updated.
+
+<img src="https://imgur.com/kjnwya2.jpg" width="500"><img src="https://imgur.com/8Ba6BNd.png" width="500">
+
+Now I can check my record with the !record command! As you can see, fellow tester frost picked the correct team. He has a positive record, so his response message was a happy one, whereas mine was not.
+
+![](https://media.giphy.com/media/xXyxpsSp0XexnAjDiP/giphy.gif)
+
+Sorry for the Red Wings disrespect. Here is the code behind that message.
+```javascript
+message.channel.send(`${message.author} has ${profileData.wins} wins and ${profileData.losses} losses. Looking like the Red Wings with that record right now...yikes.`);
+```
 
 
