@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-
+// Basically a constructor with default values for future user profiles
 const profileSchema = new mongoose.Schema({
     userID: {type: String, require: true, unique: true},
     points: {type: Number, default: 0},
