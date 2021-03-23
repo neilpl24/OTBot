@@ -27,4 +27,8 @@ let runBot = setInterval(function(){
 
 ## Commands
 OT Bot has a few commands that run using a message event listener while it simultaneously fetches data from ongoing games. 
+### !ot
+In order to keep track of users and their record of picks, I added an external server in MongoDB and linked it to OTBot. I will dive deeper into this process and how it gets updated in the demo section. Huge shoutout to [CodeLyon](https://www.youtube.com/watch?v=8no3SktqagY) for the tutorial on the setup.
+
+
 
