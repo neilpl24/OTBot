@@ -7,7 +7,7 @@ Also, feel free to skip this section, this is just me going off on a tangent abo
 
 The NHL keeps its scheduling data for each game on this link: https://statsapi.web.nhl.com/api/v1/schedule. This page is updated daily which allows the bot to go through the schedule path of JSON objects and loop through all the games to collect their IDs.
 
-<img src="https://imgur.com/0dn04N9.png" width="48">
+<img src="https://imgur.com/0dn04N9.png" width="200">
 
 This is extremely important because the NHL live data API is in this format: /api/v1/game/**gameIDgoeshere**/feed/live?site=en_nhl. 
 
