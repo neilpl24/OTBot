@@ -31,6 +31,7 @@ OT Bot has a few commands that run using a message event listener while it simul
 In order to keep track of users and their record of picks, I added an external server in MongoDB and linked it to OTBot. I will dive deeper into this process and how it gets updated in the demo section. Huge shoutout to [CodeLyon](https://www.youtube.com/watch?v=8no3SktqagY) for the tutorial on the setup.
 
 The !ot command signs a user up to participate in the OT picks challenge by creating an ID for them in the MongoDB database. Here is a demonstration.
+
 ![](https://media.giphy.com/media/h8ClkXlFAAZuABRPDQ/giphy.gif)
 
 After running this command, a new user profile with my userID and some initalized fields will appear in the MongoDB server. Here is a snippet of the code behind the scenes and its result.
@@ -44,7 +45,7 @@ if(profileData == undefined) {
    wins: 0,
    losses: 0
 ``` 
-<img src="https://imgur.com/a/9JDwqwH.png" width="500">
+![img](https://imgur.com/a/9JDwqwH.png)
 
 If I try to run the !ot command again, I will be notified by the bot that I have already signed up. This handles a potential error.
 ![](https://media.giphy.com/media/wjsFMD02n0RdrypN9j/giphy.gif)
