@@ -7,13 +7,13 @@ Also, feel free to skip this section, this is just me going off on a tangent abo
 
 The NHL keeps its scheduling data for each game on this link: https://statsapi.web.nhl.com/api/v1/schedule. This page is updated daily which allows the bot to go through the schedule path of JSON objects and loop through all the games to collect their IDs.
 
-<img src="https://imgur.com/0dn04N9.png" width="200">
+<img src="https://imgur.com/0dn04N9.png" width="500">
 
 This is extremely important because the NHL live data API is in this format: /api/v1/game/**gameIDgoeshere**/feed/live?site=en_nhl. 
 
 The bot is able to loop through a list of URLs and now has a plethora of live data to work with. The live API the NHL uses is very up to date and has some really cool features that I hopefully can use to add some updates to this bot. Here is an example of some of the live data JSON objects in one of today's (03/22/2021) matchups, which features the Carolina Hurricanes and the Columbus Blue Jackets. 
 
-![img](https://imgur.com/6sDUAfA.jpg) ![img](https://imgur.com/2Zc89ad.png)
+<img src="https://imgur.com/6sDUAfA.jpg" width="500"><img src="https://imgur.com/2Zc89ad.png" width="500">
 
 At the time of these screenshots, the Hurricanes were up 1-0 and the game was in the first intermission. We see here that our API data reflects that.
 
