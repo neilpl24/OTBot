@@ -1,7 +1,7 @@
 # OTBot
 OT Bot is a discord bot designed to enhance the exciting experience of NHL’s coveted 3 on 3 overtime. After an NHL game has reached the conclusion of regulation in a tie, OT Bot will notify participating users with a message saying that they have 5 minutes to lock in their pick for overtime. The bot will also provide a streaming link to the game in question. A correct pick will provide a 1.5 points and a win to the winner on the server’s respective leaderboard, whereas an incorrect pick will subtract a point and add a loss.
 ## Fetching NHL Data
-Before I dive in, I would like to give a special thanks to .
+Before I dive in, I would like to give a special thanks to Chris Beardy for directing me to several NHL API links and projects and helping me navigate through the lengthy directories. 
 
 Also, feel free to skip this section, this is just me going off on a tangent about the NHL's API and how fun it was to work with it.
 
@@ -52,8 +52,7 @@ If I try to run the !ot command again, I will be notified by the bot that I have
 
 ### !record
 We will get to see the !record command in its proper form later on in this README, but it does contain a cool error handling feature that can direct users who have not done the !ot command to sign up for OTBot. Here is a little demo.
-
-
+![](https://media.giphy.com/media/YAkRFQxuVm4tVwni5y/giphy.gif)
 
 ## Demonstration
 Now that I've laid down the foundations of the bot, I am going to go through a real simulation of it. Today's (03/22/2021) overtime game I am going to use will be the New York Islanders 2-1 win over the Philadelphia Flyers.
@@ -86,5 +85,6 @@ Sorry for the Red Wings disrespect. Here is the code behind that message.
 ```javascript
 message.channel.send(`${message.author} has ${profileData.wins} wins and ${profileData.losses} losses. Looking like the Red Wings with that record right now...yikes.`);
 ```
-
+## Final Words
+I really enjoyed working on this project, thank you to those who helped me break this bot several times! If anyone would like to join our server and play (we will be running it during the Stanley Cup Playoffs as well), send me a message on here or on Linkedin. Thank you so much for reading this if you made it down here.
 
