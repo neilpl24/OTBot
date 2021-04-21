@@ -56,6 +56,10 @@ We will get to see the !record command in its proper form later on in this READM
 
 ![](https://media.giphy.com/media/YAkRFQxuVm4tVwni5y/giphy.gif)
 
+### !standings
+The standings command is very simple. It provides an ordered ranking of the players of OTBot based on win percentage. Here is a demo. The message sent by the bot is enclosed by 3 backticks to create the table in monocode.
+![](https://media.giphy.com/media/JrDoBir635TI6Nf8ZS/giphy.gif)
+
 ## Demonstration
 Now that I've laid down the foundations of the bot, I am going to go through a real simulation of it. Today's (03/22/2021) overtime game I am going to use will be the New York Islanders' 2-1 win over the Philadelphia Flyers.
 
