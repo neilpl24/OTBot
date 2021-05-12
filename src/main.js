@@ -162,7 +162,7 @@ bot.on('message', message => {
             for(let i=0; i<record.length; i++) {
                 let displayedUsername = (await bot.users.fetch(record[i].id)).username;
                 const lengthDiff = usernameArray[0].length - displayedUsername.length;
-                displayedUsername = displayedUsername + ''.repeat(lengthDiff);
+                displayedUsername = displayedUsername + ' '.repeat(lengthDiff);
                 standingsMessage = standingsMessage + place + '. ' +`${displayedUsername} || ${record[i].wins} || ${record[i].losses} || ${(record[i].wins/(record[i].wins+record[i].losses)).toFixed(3)}\n`
                 if(record.length - i == 1) {
                     standingsMessage = standingsMessage + '```';
