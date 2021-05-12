@@ -154,12 +154,17 @@ bot.on('message', message => {
             let profiles = await profileModel.find();
             profiles = profiles.filter(profile => profile.userID != 819643466720083989);
             const record = profiles.map(profile => ({id: profile.userID, wins: profile.wins, losses:profile.losses}));
+            let usernameArray = record.sort((a, b) => ((await bot.users.fetch(a.id).length)-(await bot.users.fetch(b.id).length)));
             record.sort((a, b) => ((a.wins/(a.wins+a.losses))-(b.wins/(b.wins+a.losses))));
             let place = 1;
             let standingsMessage = '```'+ (await bot.users.fetch(record[0].id)).username + ` leads the way! Here are the standings currently.\n`;
             standingsMessage = standingsMessage + 'User || Wins || Losses || Win %\n';
+            
             for(let i=0; i<record.length; i++) {
-                    standingsMessage = standingsMessage + place + '. ' +`${(await bot.users.fetch(record[i].id)).username} || ${record[i].wins} || ${record[i].losses} || ${(record[i].wins/(record[i].wins+record[i].losses)).toFixed(3)}\n`
+                let displayedUsername = await bot.users.fetch(record[i].id);
+                const lengthDiff = usernameArray[0].length - displayedUsername.length;
+                displayedUsername = displayedUsername + ''.repeat(lengthDiff);
+                standingsMessage = standingsMessage + place + '. ' +`${displayedUsername} || ${record[i].wins} || ${record[i].losses} || ${(record[i].wins/(record[i].wins+record[i].losses)).toFixed(3)}\n`
                 if(record.length - i == 1) {
                     standingsMessage = standingsMessage + '```';
                 }
