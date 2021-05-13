@@ -159,16 +159,16 @@ bot.on('message', message => {
                 const userLength = (await bot.users.fetch(profile.id)).username.length;
                 longestUser = userLength > longestUser ? userLength : longestUser;
             });
-            record.sort((a, b) => ((a.wins/(a.wins+a.losses))-(b.wins/(b.wins+a.losses))));
+            record.sort((a, b) => ((a.wins/(a.wins+a.losses))-(b.wins/(b.wins+b.losses))));
             let place = 1;
             let standingsMessage = '```'+ (await bot.users.fetch(record[0].id)).username + ` leads the way! Here are the standings currently.\n`;
             standingsMessage = standingsMessage + '         User    || W || L || Win %\n';
-            for(let i=0; i<record.length; i++) {
+            for(let i=record.length-1; i>=0; i--) {
                 let displayedUsername = (await bot.users.fetch(record[i].id)).username;
                 const lengthDiff = longestUser - displayedUsername.length;
                 displayedUsername = displayedUsername + ' '.repeat(lengthDiff);
                 standingsMessage = standingsMessage + place + '. ' +`${displayedUsername} || ${record[i].wins} || ${record[i].losses} || ${(record[i].wins/(record[i].wins+record[i].losses)).toFixed(3)}\n`
-                if(record.length - i == 1) {
+                if(record.length == 0) {
                     standingsMessage = standingsMessage + '```';
                 }
                 place++;
