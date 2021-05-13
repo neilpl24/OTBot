@@ -161,14 +161,14 @@ bot.on('message', message => {
             });
             record.sort((a, b) => ((a.wins/(a.wins+a.losses))-(b.wins/(b.wins+b.losses))));
             let place = 1;
-            let standingsMessage = '```'+ (await bot.users.fetch(record[0].id)).username + ` leads the way! Here are the standings currently.\n`;
+            let standingsMessage = '```'+ (await bot.users.fetch(record[record.length-1].id)).username + ` leads the way! Here are the standings currently.\n`;
             standingsMessage = standingsMessage + '         User    || W || L || Win %\n';
             for(let i=record.length-1; i>=0; i--) {
                 let displayedUsername = (await bot.users.fetch(record[i].id)).username;
                 const lengthDiff = longestUser - displayedUsername.length;
                 displayedUsername = displayedUsername + ' '.repeat(lengthDiff);
                 standingsMessage = standingsMessage + place + '. ' +`${displayedUsername} || ${record[i].wins} || ${record[i].losses} || ${(record[i].wins/(record[i].wins+record[i].losses)).toFixed(3)}\n`
-                if(record.length == 0) {
+                if(i == 0) {
                     standingsMessage = standingsMessage + '```';
                 }
                 place++;
