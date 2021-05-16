@@ -109,6 +109,8 @@ async function getSchedule(){
                         clearInterval(over);
                         // Alerts the users to the final score and that their data has been logged.
                         if(gameEnded.liveData.linescore.teams.away.goals >= gameEnded.liveData.linescore.teams.home.goals) {
+                            correct = [];
+                            incorrect = [];
                             channel.send(`The ${gameEnded.liveData.linescore.teams.away.team.name} have beaten the ${gameEnded.liveData.linescore.teams.home.team.name} by a score of ${gameEnded.liveData.linescore.teams.away.goals} to ${gameEnded.liveData.linescore.teams.home.goals}! I am now logging everyone's scores. You can check using the records command.`);
                             awayUsers.forEach(user => {
                                 correct.push(user.id);
