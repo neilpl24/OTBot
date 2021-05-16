@@ -69,8 +69,8 @@ async function getSchedule(){
                 const homeTeam = gameDataArray[i].liveData.linescore.teams.home;
                 const awayTeam = gameDataArray[i].liveData.linescore.teams.away;
 
-                channel.send(`GET READY...IT'S TIME!!!! The ${homeTeam.team.name} take on the ${awayTeam.team.name}! Who is your pick! React with a '✅' to lock your pick in for the ${homeTeam.team.name} or react with a ☑️ to lock your pick in for the ${awayTeam.team.name} ! You have 2 minutes!`);
-                    // Fetches the reactions from the OT games after 2 minutes.
+                channel.send(`GET READY...IT'S TIME!!!! The ${homeTeam.team.name} take on the ${awayTeam.team.name}! Who is your pick! React with a '✅' to lock your pick in for the ${homeTeam.team.name} or react with a ☑️ to lock your pick in for the ${awayTeam.team.name} ! You have 10 minutes!`);
+                    // Fetches the reactions from the OT games after 10 minutes.
                     setTimeout(() => {
                         channel.messages.fetch({ limit: 2 }).then(messages => {
                             let homeID = messages.get(messages.keyArray()[0]);
@@ -97,7 +97,7 @@ async function getSchedule(){
                             });
                         }
                     });
-                 }, 120000);
+                 }, 600000);
                 // Calls the getWin() function until the game in question has ended.
                 let over = setInterval(function(){
                     getWin()}, 10000);
