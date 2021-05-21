@@ -40,24 +40,19 @@ let runBot = setInterval(function(){
 async function getSchedule(){
     const response = await fetch(scheduleUrl);
     const schedule = await response.json();
-    let games = [];
-
     // Uses the schedule API to get our game IDs to track live data.
-    for(let i=0; i<schedule.totalGames; i++) {
-        games.push(schedule.dates[0].games[i].gamePk);
-        games.sort();
-    }
-    gameUrls = [];
-    gameDataArray = [];
+    let games = schedule.dates[0].games.map(game => game.gamePk);
+    games.sort();
+    let gameUrls = games.map(gamePk=> `https://statsapi.web.nhl.com/api/v1/game/${gamePk}/feed/live?site=en_nhl`);
+    let gameDataArray = [];
 
     // Creates an array of game data json objects 
     for(let i=0; i<schedule.totalGames; i++) {
-        gameUrls.push(`https://statsapi.web.nhl.com/api/v1/game/${games[i]}/feed/live?site=en_nhl`);
         const gameResponse = await fetch(gameUrls[i]);
         const gameData = await gameResponse.json();
         gameDataArray.push(gameData);
-
     }
+    
     // Scans all NHL games for overtime
     for(let i=0; i<gameDataArray.length; i++) {
         // This is the channel the bot will send messages in.
@@ -73,7 +68,7 @@ async function getSchedule(){
 
                 channel.send(`The ${homeTeam.team.name} take on the ${awayTeam.team.name} in overtime! Who is your pick! You have 10 minutes! React with the emotes below.`);
                 home = homeTeam.team.name;
-                away = awayTeam.team.name
+                away = awayTeam.team.name;
                     // Fetches the reactions from the OT games after 10 minutes.
                     setTimeout(() => {
                         channel.messages.fetch({ limit: 2 }).then(messages => {
@@ -147,8 +142,8 @@ bot.on('message', message => {
         message.react(message.guild.emojis.cache.find(emoji => emoji.name === nhlmap.get(away)));
     }
 
-    createProfile();
-    async function createProfile(){
+    asyncCommands();
+    async function asyncCommands(){
         const prefix = process.env.PREFIX;
         const args = message.content.slice(prefix.length).split(/ +/);
         const command = args.shift().toLowerCase();
