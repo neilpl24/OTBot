@@ -164,7 +164,15 @@ bot.on('message', message => {
                 const userLength = (await bot.users.fetch(profile.id)).username.length;
                 longestUser = userLength > longestUser ? userLength : longestUser;
             });
-            record.sort((a, b) => ((a.wins/(a.wins+a.losses))-(b.wins/(b.wins+b.losses))));
+            record.sort((a, b) => {
+                if(a.wins + a.losses == 0) {
+                    return -1;
+                } else if(b.wins + b.losses == 0) {
+                    return 1;
+                } else {
+                    return ((a.wins/(a.wins+a.losses))-(b.wins/(b.wins+b.losses)));
+                }
+            });
             let place = 1;
             let standingsMessage = '```'+ (await bot.users.fetch(record[record.length-1].id)).username + ` leads the way! Here are the standings currently.\n`;
             standingsMessage = standingsMessage + '         User    || W || L || Win %\n';
