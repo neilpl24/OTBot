@@ -67,6 +67,10 @@ Once any game goes to overtime, OTBot will send a message in the read-only overt
 
 <img src="https://imgur.com/Ws0r2Fc.png" width="500"><img src="https://imgur.com/9sRL41l.jpg" width="500">
 
+I have now added team logos instead of checkmarks. So now overtime messages will look like this (ignore the time, this was a test run).
+
+<img src="https://imgur.com/u5Iasqu.png" width="500">
+
 In this simulation, I chose the Flyers. Another user in the test server chose the Islanders. Due to the delay between the start of the 3rd period intermission and message sent, users have two minutes to put their picks in instead of the five minute intermission period. While we wait for the game to end, this is what is happening behind the scenes.
 ```javascript
  let over = setInterval(function(){
