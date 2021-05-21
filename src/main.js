@@ -5,15 +5,16 @@ let otGames = [];
 // Keeps track of who got their picks right or wrong.
 let correct = [];
 let incorrect = [];
+let home = '';
+let away = '';
 const mongoose = require("mongoose");
+const nhlmap = require("../src/nhlmap");
 
 require('dotenv').config();
 
 const { Client } = require('discord.js');
 
 const bot = new Client();
-
-
 
 bot.on('ready', () => {
     console.log("OTBot is live.");
@@ -29,6 +30,7 @@ mongoose.connect(process.env.MONGODB_SRV, {
 }).catch((err) => {
     console.log(err);
 });
+
 // This setInterval function runs getSchedule() every 10 seconds so that we are receiving up to date data.
 let runBot = setInterval(function(){
  getSchedule()}, 3000);
@@ -69,7 +71,9 @@ async function getSchedule(){
                 const homeTeam = gameDataArray[i].liveData.linescore.teams.home;
                 const awayTeam = gameDataArray[i].liveData.linescore.teams.away;
 
-                channel.send(`GET READY...IT'S TIME!!!! The ${homeTeam.team.name} take on the ${awayTeam.team.name}! Who is your pick! React with a '✅' to lock your pick in for the ${homeTeam.team.name} or react with a ☑️ to lock your pick in for the ${awayTeam.team.name} ! You have 10 minutes!`);
+                channel.send(`The ${homeTeam.team.name} take on the ${awayTeam.team.name} in overtime! Who is your pick! You have 10 minutes! React with the emotes below.`);
+                home = homeTeam.team.name;
+                away = awayTeam.team.name
                     // Fetches the reactions from the OT games after 10 minutes.
                     setTimeout(() => {
                         channel.messages.fetch({ limit: 2 }).then(messages => {
@@ -82,20 +86,18 @@ async function getSchedule(){
                             }
                         }
                         // Collects reactions and pushes userIDs to their respective arrays.
-                        if(homeID.reactions.resolve('✅').users != undefined) {
-                            homeID.reactions.resolve('✅').users.fetch({limit:100}).then(users => {
+                        homeID.reactions.cache.filter(reaction => {
+                            homeID.reactions.resolve(reaction).users.fetch({limit:100}).then(users => {
                                 users.forEach(function(value, key) {
-                                    homeUsers.push(value);
+                                    if(nhlmap.get(homeTeam.team.name) == reaction._emoji.name) {
+                                        homeUsers.push(value);
+                                    } else {
+                                        awayUsers.push(value);
+                                    }
                                 });
-                            });
-                        }
-                        if(homeID.reactions.resolve('☑️').users != undefined) {
-                            homeID.reactions.resolve('☑️').users.fetch({limit:100}).then(users => {
-                                users.forEach(function(value, key) {
-                                    awayUsers.push(value);
-                                });
-                            });
-                        }
+                            })
+                        });
+
                     });
                  }, 600000);
                 // Calls the getWin() function until the game in question has ended.
@@ -140,10 +142,11 @@ const profileModel = require("../models/profileSchema")
 // Message event listener
 bot.on('message', message => {
     // Autogenerates reactions for the overtime game.
-    if(message.content.includes(`GET READY...IT'S TIME!!!!`)) {
-        message.react('✅');
-        message.react('☑️');
+    if(message.content.includes('React with the emotes below') && message.author.id == '819643466720083989') {
+        message.react(message.guild.emojis.cache.find(emoji => emoji.name === nhlmap.get(home)));
+        message.react(message.guild.emojis.cache.find(emoji => emoji.name === nhlmap.get(away)));
     }
+
     createProfile();
     async function createProfile(){
         const prefix = process.env.PREFIX;
