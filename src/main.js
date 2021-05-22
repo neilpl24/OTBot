@@ -93,7 +93,7 @@ async function getSchedule(){
                         });
 
                     });
-                 }, 600000);
+                 }, 300000);
                 // Calls the getWin() function until the game in question has ended.
                 let over = setInterval(function(){
                     getWin()}, 10000);
