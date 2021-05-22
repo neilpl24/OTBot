@@ -9,6 +9,7 @@ let home = '';
 let away = '';
 const mongoose = require("mongoose");
 const nhlmap = require("../src/nhlmap");
+const numbermap = require("../src/numbermap");
 
 require('dotenv').config();
 
@@ -56,7 +57,7 @@ async function getSchedule(){
     // Scans all NHL games for overtime
     for(let i=0; i<gameDataArray.length; i++) {
         // This is the channel the bot will send messages in.
-        const channel = bot.channels.cache.get('819792691511558184');
+        const channel = bot.channels.cache.get('834170049416790067');
         // Determines if a game is in overtime or not.
         if((gameDataArray[i].liveData.linescore.currentPeriod == 3 || gameDataArray[i].liveData.linescore.currentPeriod == 4)&& gameDataArray[i].liveData.linescore.intermissionInfo.inIntermission) {
             if(!otGames.includes(gameDataArray[i].gameData.game.pk)) {
@@ -93,7 +94,7 @@ async function getSchedule(){
                         });
 
                     });
-                 }, 300000);
+                 }, 600000);
                 // Calls the getWin() function until the game in question has ended.
                 let over = setInterval(function(){
                     getWin()}, 10000);
@@ -133,13 +134,24 @@ async function getSchedule(){
 }
 
 const profileModel = require("../models/profileSchema")
+// This function displays the amount of minutes left users have to lock in their pick via emote reaction.
 // Message event listener
 bot.on('message', message => {
     // Autogenerates reactions for the overtime game.
     if(message.content.includes('React with the emotes below') && message.author.id == '819643466720083989') {
         message.react(message.guild.emojis.cache.find(emoji => emoji.name === nhlmap.get(home)));
         message.react(message.guild.emojis.cache.find(emoji => emoji.name === nhlmap.get(away)));
-    }
+        message.react(numbermap.get(10));
+        let minsLeft = 9;
+        let otTimer = setInterval(() => {
+                message.reactions.cache.get(numbermap.get(minsLeft+1)).remove();
+                message.react(numbermap.get(minsLeft));
+                minsLeft--;
+                if(minsLeft == -1) {
+                    clearInterval(otTimer);
+                }
+            }, 60000);
+        }
 
     asyncCommands();
     async function asyncCommands(){
