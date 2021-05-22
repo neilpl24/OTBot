@@ -65,10 +65,9 @@ async function getSchedule(){
                 otGames.push(gameDataArray[i].gameData.game.pk);
                 const homeTeam = gameDataArray[i].liveData.linescore.teams.home;
                 const awayTeam = gameDataArray[i].liveData.linescore.teams.away;
-
-                channel.send(`The ${homeTeam.team.name} take on the ${awayTeam.team.name} in overtime! Who is your pick! You have 10 minutes! React with the emotes below.`);
                 home = homeTeam.team.name;
                 away = awayTeam.team.name;
+                channel.send(`The ${homeTeam.team.name} take on the ${awayTeam.team.name} in overtime! Who is your pick! You have 10 minutes! React with the emotes below.`);
                     // Fetches the reactions from the OT games after 10 minutes.
                     setTimeout(() => {
                         channel.messages.fetch({ limit: 2 }).then(messages => {
