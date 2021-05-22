@@ -30,7 +30,7 @@ nhlmap.set('Tampa Bay Lightning', 'tbl');
 nhlmap.set('Toronto Maple Leafs', 'tor');
 nhlmap.set('Vancouver Canucks', 'van');
 nhlmap.set('Vegas Golden Knights', 'vgk');
-nhlmap.set('Winnipeg Jets', 'wpj');
+nhlmap.set('Winnipeg Jets', 'wpg');
 nhlmap.set('Washington Capitals', 'wsh');
 
 module.exports = nhlmap; 
