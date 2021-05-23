@@ -57,7 +57,7 @@ async function getSchedule(){
     // Scans all NHL games for overtime
     for(let i=0; i<gameDataArray.length; i++) {
         // This is the channel the bot will send messages in.
-        const channel = bot.channels.cache.get('834170049416790067');
+        const channel = bot.channels.cache.get('819792691511558184');
         // Determines if a game is in overtime or not.
         if((gameDataArray[i].liveData.linescore.currentPeriod == 3 || gameDataArray[i].liveData.linescore.currentPeriod == 4)&& gameDataArray[i].liveData.linescore.intermissionInfo.inIntermission) {
             if(!otGames.includes(gameDataArray[i].gameData.game.pk)) {
