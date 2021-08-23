@@ -42,6 +42,10 @@ async function getSchedule(){
     const response = await fetch(scheduleUrl);
     const schedule = await response.json();
     // Uses the schedule API to get our game IDs to track live data.
+    if(schedule.dates[0] == undefined) {
+        clearInterval(runBot);
+        return;
+    }
     let games = schedule.dates[0].games.map(game => game.gamePk);
     games.sort();
     let gameUrls = games.map(gamePk=> `https://statsapi.web.nhl.com/api/v1/game/${gamePk}/feed/live?site=en_nhl`);
