@@ -33,5 +33,5 @@ nhlmap.set('Vegas Golden Knights', 'vgk');
 nhlmap.set('Winnipeg Jets', 'wpg');
 nhlmap.set('Washington Capitals', 'wsh');
 
-module.exports = nhlmap; 
+module.exports = nhlmap;
 

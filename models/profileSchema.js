@@ -4,10 +4,11 @@ const mongoose = require('mongoose');
 // Creates the user profile setup
 
 const profileSchema = new mongoose.Schema({
-    userID: {type: String, require: true, unique: true},
-    points: {type: Number, default: 0},
-    wins: {type: Number, default: 0},
-    losses: {type: Number, default: 0}
+    userID: { type: String, require: true, unique: true },
+    points: { type: Number, default: 0 },
+    wins: { type: Number, default: 0 },
+    losses: { type: Number, default: 0 },
+    streak: { type: Number, default: 0 }
 });
 
 const model = mongoose.model('ProfileModels', profileSchema);

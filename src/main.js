@@ -9,7 +9,8 @@ let home = '';
 let away = '';
 const mongoose = require("mongoose");
 const nhlmap = require("../src/nhlmap");
-const numbermap = require("../src/numbermap");
+const streakmap = require("../src/streakmap");
+
 
 require('dotenv').config();
 
@@ -26,45 +27,46 @@ mongoose.connect(process.env.MONGODB_SRV, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
     useFindAndModify: false
-}).then(()=>{
+}).then(() => {
     console.log('Connection to database is successful!')
 }).catch((err) => {
     console.log(err);
 });
 
 // This setInterval function runs getSchedule() every 10 seconds so that we are receiving up to date data.
-let runBot = setInterval(function(){
- getSchedule()}, 3000);
+let runBot = setInterval(function () {
+    getSchedule()
+}, 3000);
 
 
 // This function is the bulk of the OTBot process. It is responsible for all of the fetching and transporting of the game data.
-async function getSchedule(){
+async function getSchedule() {
     const response = await fetch(scheduleUrl);
     const schedule = await response.json();
     // Uses the schedule API to get our game IDs to track live data.
-    if(schedule.dates[0] == undefined) {
+    if (schedule.dates[0] == undefined) {
         clearInterval(runBot);
         return;
     }
     let games = schedule.dates[0].games.map(game => game.gamePk);
     games.sort();
-    let gameUrls = games.map(gamePk=> `https://statsapi.web.nhl.com/api/v1/game/${gamePk}/feed/live?site=en_nhl`);
+    let gameUrls = games.map(gamePk => `https://statsapi.web.nhl.com/api/v1/game/${gamePk}/feed/live?site=en_nhl`);
     let gameDataArray = [];
 
     // Creates an array of game data json objects 
-    for(let i=0; i<schedule.totalGames; i++) {
+    for (let i = 0; i < schedule.totalGames; i++) {
         const gameResponse = await fetch(gameUrls[i]);
         const gameData = await gameResponse.json();
         gameDataArray.push(gameData);
     }
-    
+
     // Scans all NHL games for overtime
-    for(let i=0; i<gameDataArray.length; i++) {
+    for (let i = 0; i < gameDataArray.length; i++) {
         // This is the channel the bot will send messages in.
         const channel = bot.channels.cache.get('819792691511558184');
         // Determines if a game is in overtime or not.
-        if((gameDataArray[i].liveData.linescore.currentPeriod == 3 || gameDataArray[i].liveData.linescore.currentPeriod == 4)&& gameDataArray[i].liveData.linescore.intermissionInfo.inIntermission) {
-            if(!otGames.includes(gameDataArray[i].gameData.game.pk)) {
+        if ((gameDataArray[i].liveData.linescore.currentPeriod == 3 || gameDataArray[i].liveData.linescore.currentPeriod == 4) && gameDataArray[i].liveData.linescore.intermissionInfo.inIntermission) {
+            if (!otGames.includes(gameDataArray[i].gameData.game.pk)) {
                 let awayUsers = [];
                 let homeUsers = [];
                 otGames.push(gameDataArray[i].gameData.game.pk);
@@ -73,22 +75,22 @@ async function getSchedule(){
                 home = homeTeam.team.name;
                 away = awayTeam.team.name;
                 channel.send(`The ${homeTeam.team.name} take on the ${awayTeam.team.name} in overtime! Who is your pick? You have 10 minutes! React with the emotes below. @everyone`);
-                    // Fetches the reactions from the OT games after 10 minutes.
-                    setTimeout(() => {
-                        channel.messages.fetch({ limit: 2 }).then(messages => {
-                            let homeID = messages.get(messages.keyArray()[0]);
+                // Fetches the reactions from the OT games after 10 minutes.
+                setTimeout(() => {
+                    channel.messages.fetch({ limit: 2 }).then(messages => {
+                        let homeID = messages.get(messages.keyArray()[0]);
                         // This for loop is a precaution for when games go into overtime within 2 minutes of each other.
-                        for(let i=0; i<2; i++) {
-                            if(messages.get(messages.keyArray()[i]).content.includes(homeTeam.team.name)) {
+                        for (let i = 0; i < 2; i++) {
+                            if (messages.get(messages.keyArray()[i]).content.includes(homeTeam.team.name)) {
                                 homeID = messages.get(messages.keyArray()[i]);
                                 break;
                             }
                         }
                         // Collects reactions and pushes userIDs to their respective arrays.
                         homeID.reactions.cache.filter(reaction => {
-                            homeID.reactions.resolve(reaction).users.fetch({limit:100}).then(users => {
-                                users.forEach(function(value, key) {
-                                    if(nhlmap.get(homeTeam.team.name) == reaction._emoji.name) {
+                            homeID.reactions.resolve(reaction).users.fetch({ limit: 100 }).then(users => {
+                                users.forEach(function (value, key) {
+                                    if (nhlmap.get(homeTeam.team.name) == reaction._emoji.name) {
                                         homeUsers.push(value);
                                     } else {
                                         awayUsers.push(value);
@@ -98,28 +100,29 @@ async function getSchedule(){
                         });
 
                     });
-                 }, 600000);
+                }, 600000);
                 // Calls the getWin() function until the game in question has ended.
-                let over = setInterval(function(){
-                    getWin()}, 10000);
+                let over = setInterval(function () {
+                    getWin()
+                }, 10000);
                 async function getWin() {
                     const res = await fetch(gameUrls[i]);
                     const gameEnded = await res.json();
                     // Continues the getWin() function once the game ends.
-                    if(gameEnded.gameData.status.abstractGameState == "Final" && otGames.includes(gameEnded.gameData.game.pk)) {
+                    if (gameEnded.gameData.status.abstractGameState == "Final" && otGames.includes(gameEnded.gameData.game.pk)) {
                         clearInterval(over);
                         correct = [];
                         incorrect = [];
                         // Alerts the users to the final score and that their data has been logged.
-                        if(gameEnded.liveData.linescore.teams.away.goals >= gameEnded.liveData.linescore.teams.home.goals) {
+                        if (gameEnded.liveData.linescore.teams.away.goals >= gameEnded.liveData.linescore.teams.home.goals) {
                             channel.send(`The ${gameEnded.liveData.linescore.teams.away.team.name} have beaten the ${gameEnded.liveData.linescore.teams.home.team.name} by a score of ${gameEnded.liveData.linescore.teams.away.goals} to ${gameEnded.liveData.linescore.teams.home.goals}! I am now logging everyone's scores. You can check using the records command.`);
                             awayUsers.forEach(user => {
                                 correct.push(user.id);
-                                });
+                            });
                             homeUsers.forEach(user => {
                                 incorrect.push(user.id);
-                                });
-                                updateData();
+                            });
+                            updateData();
                         } else {
                             channel.send(`The ${gameEnded.liveData.linescore.teams.home.team.name} have beaten the ${gameEnded.liveData.linescore.teams.away.team.name} by a score of ${gameEnded.liveData.linescore.teams.home.goals} to ${gameEnded.liveData.linescore.teams.away.goals}! I am now logging everyone's scores. You can check using the records command.`);;
                             homeUsers.forEach(user => {
@@ -128,12 +131,13 @@ async function getSchedule(){
                             awayUsers.forEach(user => {
                                 incorrect.push(user.id);
                             });
-                            updateData();
+                            // This number aggregates the total number of voters and removes the bots emote reactions from the vote total.
+                            updateData(homeUsers.length + awayUsers.length - 2);
                         }
                     }
                 }
             }
-        } 
+        }
     }
 }
 
@@ -142,168 +146,166 @@ const profileModel = require("../models/profileSchema")
 // Message event listener
 bot.on('message', message => {
     // Autogenerates reactions for the overtime game.
-    if(message.content.includes('React with the emotes below') && message.author.id == '819643466720083989') {
+    if (message.content.includes('React with the emotes below') && message.author.id == '819643466720083989') {
         message.react(message.guild.emojis.cache.find(emoji => emoji.name === nhlmap.get(home)));
         message.react(message.guild.emojis.cache.find(emoji => emoji.name === nhlmap.get(away)));
         message.react(numbermap.get(10));
         let minsLeft = 9;
         let otTimer = setInterval(() => {
-                message.reactions.cache.get(numbermap.get(minsLeft+1)).remove();
-                message.react(numbermap.get(minsLeft));
-                minsLeft--;
-                if(minsLeft == -1) {
-                    clearInterval(otTimer);
-                }
-            }, 60000);
-        }
+            message.reactions.cache.get(numbermap.get(minsLeft + 1)).remove();
+            message.react(numbermap.get(minsLeft));
+            minsLeft--;
+            if (minsLeft == -1) {
+                clearInterval(otTimer);
+            }
+        }, 60000);
+    }
 
     asyncCommands();
-    async function asyncCommands(){
+    async function asyncCommands() {
         const prefix = process.env.PREFIX;
         const args = message.content.slice(prefix.length).split(/ +/);
         const command = args.shift().toLowerCase();
-        if(!message.content.startsWith(prefix)) {
+        if (!message.content.startsWith(prefix)) {
             return;
         }
-        if(command === "standings") {
+        if (command === "standings") {
             let profiles = await profileModel.find();
             profiles = profiles.filter(profile => profile.userID != 819643466720083989);
-            const record = profiles.map(profile => ({id: profile.userID, wins: profile.wins, losses:profile.losses}));
+            const record = profiles.map(profile => ({ id: profile.userID, wins: profile.wins, losses: profile.losses }));
             let longestUser = 0;
             record.forEach(async profile => {
                 const userLength = (await bot.users.fetch(profile.id)).username.length;
                 longestUser = userLength > longestUser ? userLength : longestUser;
             });
             record.sort((a, b) => {
-                if(a.wins + a.losses == 0) {
+                if (a.wins + a.losses == 0) {
                     return -1;
-                } else if(b.wins + b.losses == 0) {
+                } else if (b.wins + b.losses == 0) {
                     return 1;
                 } else {
-                    return ((a.wins/(a.wins+a.losses))-(b.wins/(b.wins+b.losses)));
+                    return ((a.wins / (a.wins + a.losses)) - (b.wins / (b.wins + b.losses)));
                 }
             });
             let place = 1;
-            let standingsMessage = '```'+ (await bot.users.fetch(record[record.length-1].id)).username + ` leads the way! Here are the standings currently.\n`;
+            let standingsMessage = '```' + (await bot.users.fetch(record[record.length - 1].id)).username + ` leads the way! Here are the standings currently.\n`;
             standingsMessage = standingsMessage + '         User    || W || L || Win %\n';
-            for(let i=record.length-1; i>=0; i--) {
+            for (let i = record.length - 1; i >= 0; i--) {
                 let displayedUsername = (await bot.users.fetch(record[i].id)).username;
                 const lengthDiff = longestUser - displayedUsername.length;
                 displayedUsername = displayedUsername + ' '.repeat(lengthDiff);
-                standingsMessage = standingsMessage + place + '. ' +`${displayedUsername} || ${record[i].wins} || ${record[i].losses} || ${(record[i].wins/(record[i].wins+record[i].losses)).toFixed(3)}\n`
-                if(i == 0) {
+                standingsMessage = standingsMessage + place + '. ' + `${displayedUsername} || ${record[i].wins} || ${record[i].losses} || ${(record[i].wins / (record[i].wins + record[i].losses)).toFixed(3)}\n`
+                if (i == 0) {
                     standingsMessage = standingsMessage + '```';
                 }
                 place++;
             }
             message.channel.send(standingsMessage);
         }
-        if(command === "ot") {
-            let profileData = await profileModel.findOne({userID: message.author.id});
+        if (command === "ot") {
+            let profileData = await profileModel.findOne({ userID: message.author.id });
             let profile;
             // Creates a profile for a user if they are not in the MongoDB server.
-            if(profileData == undefined) {
+            if (profileData == undefined) {
                 profile = profileModel.create({
-                userID: message.author.id,
-                points: 0,
-                wins: 0,
-                losses: 0
-                }).then(() =>{
-                        message.channel.send(`${message.author} has signed up for OTBot!`);
-                        profile.save();
+                    userID: message.author.id,
+                    points: 0,
+                    wins: 0,
+                    losses: 0
+                }).then(() => {
+                    message.channel.send(`${message.author} has signed up for OTBot!`);
+                    profile.save();
                 });
             } else {
                 message.channel.send(`You have already signed up for OTBot!`);
             }
-        } else if(command === "record") {
-            let profileData = await profileModel.findOne({userID: message.author.id});
-            if(profileData == undefined) {
+        } else if (command === "record") {
+            let profileData = await profileModel.findOne({ userID: message.author.id });
+            if (profileData == undefined) {
                 message.channel.send(`${message.author}, you have not signed up for OT Bot so you do not have a record. Use the command !ot to sign up.`);
-            } else if(profileData.wins > profileData.losses) {
+            } else if (profileData.wins > profileData.losses) {
                 message.channel.send(`${message.author} has ${profileData.wins} wins and ${profileData.losses} losses. Looking like the Hurricanes with that record...keep it up!`);
             } else {
                 message.channel.send(`${message.author} has ${profileData.wins} wins and ${profileData.losses} losses. Looking like the Red Wings with that record right now...yikes.`);
             }
-        } else if(command === "stop" && message.author.id === '443437518336163841') {
+        } else if (command === "stop" && message.author.id === '443437518336163841') {
             clearInterval(runBot);
             message.channel.send(`OTBot has stopped fetching API data. How are you going to know the scores now???`);
+        } else if (command === "reset" && message.author.id === '443437518336163841') {
+            await profileModel.updateMany({
+            }, { points: 0, wins: 0, losses: 0 });
+            message.channel.send(`Standings reset. A new season has begun!`);
         }
-    }   
+    }
 });
 // This function takes our user data and uploads it to the MongoDB server.
-function updateData() {
+async function updateData(numOfUsers) {
     // Creates a map for points, wins, and losses each.
     let map = new Map();
     let winMap = new Map();
     let loseMap = new Map();
+    const allocatedPoints = numOfUsers / (correct.length - 1);
     correct.forEach(user => {
-        if(map.has(user)) {
-            map.set(user, map.get(user)+1.5);
-        } else {
-            map.set(user, 1.5);
-        }
+        map.set(user, allocatedPoints * streakmap.get(await(profileModel.findOne({ userID: message.author.id }).streak)));
     });
 
-    incorrect.forEach(user => {
-        if(map.has(user)) {
-            map.set(user, map.get(user)-1);
-        } else {
-            map.set(user, -1);
-        }
+    correct.forEach(async user => {
+        winMap.set(user, 1);
+        await profileModel.findOneAndUpdate({
+            userID: user,
+        },
+            {
+                $inc: {
+                    streak: 1,
+                },
+            });
     });
 
-    correct.forEach(user => {
-        if(winMap.has(user)) {
-            winMap.set(user, winMap.get(user)+1);
-        } else {
-            winMap.set(user, 1);
-        }
-    })
-
-    incorrect.forEach(user => {
-        if(loseMap.has(user)) {
-            loseMap.set(user, loseMap.get(user)+1);
-        } else {
-            loseMap.set(user, 1);
-        }
-    })
+    incorrect.forEach(async user => {
+        loseMap.set(user, 1);
+        await profileModel.findOneAndUpdate({
+            userID: user,
+        },
+            {
+                $set: {
+                    streak: 0,
+                },
+            });
+    });
     // Converts each map to an Array of key-value pair objects.
     let values = Array.from(map, ([name, value]) => ({ name, value }));
     let winValues = Array.from(winMap, ([name, value]) => ({ name, value }));
     let loseValues = Array.from(loseMap, ([name, value]) => ({ name, value }));
-    // This function updates each participating user profile in the MongoDB server.
-    async function update() {
-        for(let i=0; i<values.length; i++) {
-            const updateProfile = await profileModel.findOneAndUpdate({
-                userID: values[i].name,
-            },
+    // These loops update each participating user profile in the MongoDB server.
+    for (let i = 0; i < values.length; i++) {
+        await profileModel.findOneAndUpdate({
+            userID: values[i].name,
+        },
             {
                 $inc: {
                     points: values[i].value,
                 },
             });
-        }
-        for(let i=0; i<winValues.length; i++) {
-            const updateProfile = await profileModel.findOneAndUpdate({
-                userID: winValues[i].name,
-            },
+    }
+    for (let i = 0; i < winValues.length; i++) {
+        await profileModel.findOneAndUpdate({
+            userID: winValues[i].name,
+        },
             {
                 $inc: {
                     wins: winValues[i].value,
                 },
             });
-        }
-        for(let i=0; i<loseValues.length; i++) {
-            const updateProfile = await profileModel.findOneAndUpdate({
-                userID: loseValues[i].name,
-            },
+    }
+    for (let i = 0; i < loseValues.length; i++) {
+        await profileModel.findOneAndUpdate({
+            userID: loseValues[i].name,
+        },
             {
                 $inc: {
                     losses: loseValues[i].value,
                 },
             });
-        }
     }
-    update();
 }
 bot.login(process.env.DISCORDJS_BOT_TOKEN);

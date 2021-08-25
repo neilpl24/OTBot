@@ -12,4 +12,4 @@ numbermap.set(2, '2️⃣');
 numbermap.set(1, '1️⃣');
 numbermap.set(0, '🔒');
 
-module.exports = numbermap; 
+module.exports = numbermap;
