@@ -1,5 +1,6 @@
 const scheduleUrl = "https://statsapi.web.nhl.com/api/v1/schedule";
 const fetch = require("node-fetch");
+let axios = require('axios');
 // otGames prevents the bot from sending duplicate messages about an overtime game.
 let otGames = [];
 // Keeps track of who got their picks right or wrong.
@@ -9,14 +10,102 @@ let home = '';
 let away = '';
 const mongoose = require("mongoose");
 const nhlmap = require("../src/nhlmap");
+const numbermap = require("../src/numbermap");
 const streakmap = require("../src/streakmap");
+const { Client, Intents, MessageButton, MessageEmbed } = require('discord.js');
 
+const button1 = new MessageButton()
+    .setCustomId("previousbtn")
+    .setLabel("Previous")
+    .setStyle("DANGER");
 
+const button2 = new MessageButton()
+    .setCustomId("nextbtn")
+    .setLabel("Next")
+    .setStyle("SUCCESS");
+
+const buttonList = [button1, button2];
+
+global.Discord = require('discord.js');
+const {
+    MessageActionRow,
+    Message
+} = require("discord.js");
+
+/**
+ * Creates a pagination embed
+ * @param {Message} msg
+ * @param {MessageEmbed[]} pages
+ * @param {MessageButton[]} buttonList
+ * @param {number} timeout
+ * @returns
+ */
+const paginationEmbed = async (msg, pages, buttonList, timeout = 120000) => {
+    if (!msg && !msg.channel) throw new Error("Channel is inaccessible.");
+    if (!pages) throw new Error("Pages are not given.");
+    if (!buttonList) throw new Error("Buttons are not given.");
+    if (buttonList[0].style === "LINK" || buttonList[1].style === "LINK")
+        throw new Error(
+            "Link buttons are not supported with discordjs-button-pagination"
+        );
+    if (buttonList.length !== 2) throw new Error("Need two buttons.");
+
+    let page = 0;
+
+    const row = new MessageActionRow().addComponents(buttonList);
+    const curPage = await bot.channels.cache.get('834170049416790067').send({
+        embeds: [pages[page].setFooter(`Page ${page + 1} / ${pages.length}`)],
+        components: [row],
+    });
+
+    const filter = (i) =>
+        i.customId === buttonList[0].customId ||
+        i.customId === buttonList[1].customId;
+
+    const collector = await curPage.createMessageComponentCollector({
+        filter,
+        time: timeout,
+    });
+
+    collector.on("collect", async (i) => {
+        switch (i.customId) {
+            case buttonList[0].customId:
+                page = page > 0 ? --page : pages.length - 1;
+                break;
+            case buttonList[1].customId:
+                page = page + 1 < pages.length ? ++page : 0;
+                break;
+            default:
+                break;
+        }
+        await i.deferUpdate();
+        await i.editReply({
+            embeds: [pages[page].setFooter(`Page ${page + 1} / ${pages.length}`)],
+            components: [row],
+        });
+        collector.resetTimer();
+    });
+
+    collector.on("end", () => {
+        if (!curPage.deleted) {
+            const disabledRow = new MessageActionRow().addComponents(
+                buttonList[0].setDisabled(true),
+                buttonList[1].setDisabled(true)
+            );
+            curPage.edit({
+                embeds: [pages[page].setFooter(`Page ${page + 1} / ${pages.length}`)],
+                components: [disabledRow],
+            });
+        }
+    });
+
+    return curPage;
+};
+module.exports = paginationEmbed;
 require('dotenv').config();
 
-const { Client } = require('discord.js');
 
-const bot = new Client();
+const bot = new Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES] });
 
 bot.on('ready', () => {
     console.log("OTBot is live.");
@@ -35,8 +124,10 @@ mongoose.connect(process.env.MONGODB_SRV, {
 
 // This setInterval function runs getSchedule() every 10 seconds so that we are receiving up to date data.
 let runBot = setInterval(function () {
-    getSchedule()
+    getSchedule();
 }, 3000);
+
+
 
 
 // This function is the bulk of the OTBot process. It is responsible for all of the fetching and transporting of the game data.
@@ -59,6 +150,7 @@ async function getSchedule() {
         const gameData = await gameResponse.json();
         gameDataArray.push(gameData);
     }
+    let gameDataArray = [];
 
     // Scans all NHL games for overtime
     for (let i = 0; i < gameDataArray.length; i++) {
@@ -74,40 +166,41 @@ async function getSchedule() {
                 const awayTeam = gameDataArray[i].liveData.linescore.teams.away;
                 home = homeTeam.team.name;
                 away = awayTeam.team.name;
-                channel.send(`The ${homeTeam.team.name} take on the ${awayTeam.team.name} in overtime! Who is your pick? You have 10 minutes! React with the emotes below. @everyone`);
-                // Fetches the reactions from the OT games after 10 minutes.
-                setTimeout(() => {
-                    channel.messages.fetch({ limit: 2 }).then(messages => {
-                        let homeID = messages.get(messages.keyArray()[0]);
-                        // This for loop is a precaution for when games go into overtime within 2 minutes of each other.
-                        for (let i = 0; i < 2; i++) {
-                            if (messages.get(messages.keyArray()[i]).content.includes(homeTeam.team.name)) {
-                                homeID = messages.get(messages.keyArray()[i]);
-                                break;
-                            }
+                channel.send(`The ${homeTeam.team.name} take on the ${awayTeam.team.name} in overtime! Who is your pick? You have 4 minutes! React with the emotes below. @everyone`);
+                // Fetches the reactions from the OT games after 5 minutes.
+                setTimeout(async () => {
+                    const messages = await channel.messages.fetch({ limit: 4 });
+                    let homeID;
+                    messages.forEach(function (value, key) {
+                        if (value.content.includes(home)) {
+                            homeID = value;
                         }
-                        // Collects reactions and pushes userIDs to their respective arrays.
-                        homeID.reactions.cache.filter(reaction => {
-                            homeID.reactions.resolve(reaction).users.fetch({ limit: 100 }).then(users => {
-                                users.forEach(function (value, key) {
-                                    if (nhlmap.get(homeTeam.team.name) == reaction._emoji.name) {
-                                        homeUsers.push(value);
-                                    } else {
-                                        awayUsers.push(value);
-                                    }
-                                });
-                            })
-                        });
-
                     });
-                }, 600000);
+                    // Collects reactions and pushes userIDs to their respective arrays.
+                    homeID.reactions.cache.filter(reaction => {
+                        homeID.reactions.resolve(reaction).users.fetch({ limit: 100 }).then(users => {
+                            users.forEach(function (value, key) {
+                                if (nhlmap.get(homeTeam.team.name) == reaction._emoji.name) {
+                                    homeUsers.push(value);
+                                } else {
+                                    awayUsers.push(value);
+                                }
+                            });
+                        })
+                    });
+                }, 240000);
                 // Calls the getWin() function until the game in question has ended.
                 let over = setInterval(function () {
                     getWin()
                 }, 10000);
                 async function getWin() {
+                    // Remove this code after
+                    const res = await axios({
+                        method: 'get',
+                        url: `/getfinishedgame`,
+                    });
                     const res = await fetch(gameUrls[i]);
-                    const gameEnded = await res.json();
+                    const gameEnded = res.data;
                     // Continues the getWin() function once the game ends.
                     if (gameEnded.gameData.status.abstractGameState == "Final" && otGames.includes(gameEnded.gameData.game.pk)) {
                         clearInterval(over);
@@ -122,7 +215,7 @@ async function getSchedule() {
                             homeUsers.forEach(user => {
                                 incorrect.push(user.id);
                             });
-                            updateData();
+                            updateData(homeUsers.length + awayUsers.length - 2);
                         } else {
                             channel.send(`The ${gameEnded.liveData.linescore.teams.home.team.name} have beaten the ${gameEnded.liveData.linescore.teams.away.team.name} by a score of ${gameEnded.liveData.linescore.teams.home.goals} to ${gameEnded.liveData.linescore.teams.away.goals}! I am now logging everyone's scores. You can check using the records command.`);;
                             homeUsers.forEach(user => {
@@ -149,8 +242,8 @@ bot.on('message', message => {
     if (message.content.includes('React with the emotes below') && message.author.id == '819643466720083989') {
         message.react(message.guild.emojis.cache.find(emoji => emoji.name === nhlmap.get(home)));
         message.react(message.guild.emojis.cache.find(emoji => emoji.name === nhlmap.get(away)));
-        message.react(numbermap.get(10));
-        let minsLeft = 9;
+        message.react(numbermap.get(4));
+        let minsLeft = 3;
         let otTimer = setInterval(() => {
             message.reactions.cache.get(numbermap.get(minsLeft + 1)).remove();
             message.react(numbermap.get(minsLeft));
@@ -169,38 +262,50 @@ bot.on('message', message => {
         if (!message.content.startsWith(prefix)) {
             return;
         }
+        if (command === "commands") {
+            message.channel.send('```Here are the following commands. Make sure to sign up via the OT command first!\n\n!ot ‒ Signs a user up for OT bot.\n!record ‒ Displays a users stats.\n!standings ‒ Displays a standing of everyone participating in OT Bot challenge.```');
+        }
         if (command === "standings") {
             let profiles = await profileModel.find();
+            // We don't want the bot in the table.
             profiles = profiles.filter(profile => profile.userID != 819643466720083989);
-            const record = profiles.map(profile => ({ id: profile.userID, wins: profile.wins, losses: profile.losses }));
-            let longestUser = 0;
-            record.forEach(async profile => {
-                const userLength = (await bot.users.fetch(profile.id)).username.length;
-                longestUser = userLength > longestUser ? userLength : longestUser;
-            });
+            const record = profiles.map(profile => ({ id: profile.userID, wins: profile.wins, points: profile.points, losses: profile.losses }));
+            // Adjust as needed to format table spacing between table data and user names
             record.sort((a, b) => {
-                if (a.wins + a.losses == 0) {
-                    return -1;
-                } else if (b.wins + b.losses == 0) {
-                    return 1;
-                } else {
-                    return ((a.wins / (a.wins + a.losses)) - (b.wins / (b.wins + b.losses)));
-                }
+                return a.points - b.points;
             });
             let place = 1;
-            let standingsMessage = '```' + (await bot.users.fetch(record[record.length - 1].id)).username + ` leads the way! Here are the standings currently.\n`;
-            standingsMessage = standingsMessage + '         User    || W || L || Win %\n';
-            for (let i = record.length - 1; i >= 0; i--) {
+            const firstStandingsEmbed = new MessageEmbed()
+                .setColor('#0099ff')
+                .setTitle('First Page')
+                .setDescription((await bot.users.fetch(record[record.length - 1].id)).username + ' leads the way!')
+                .setImage("https://i.ibb.co/f4PYMqY/alec.jpg")
+                .setFooter('Check your streaks and personal record using the !record command!');
+            const secondStandingsEmbed = new MessageEmbed()
+                .setColor('#0099ff')
+                .setTitle('Second Page')
+                .setDescription((await bot.users.fetch(record[record.length - 1].id)).username + ' leads the way!')
+                .setImage('https://ibb.co/tPRLRvv')
+                .setFooter('Check your streaks and personal record using the !record command!');
+            const pages = [
+                firstStandingsEmbed,
+                secondStandingsEmbed,
+            ];
+            const timeout = 10000;
+            for (let i = record.length - 1; i >= 5; i--) {
                 let displayedUsername = (await bot.users.fetch(record[i].id)).username;
-                const lengthDiff = longestUser - displayedUsername.length;
-                displayedUsername = displayedUsername + ' '.repeat(lengthDiff);
-                standingsMessage = standingsMessage + place + '. ' + `${displayedUsername} || ${record[i].wins} || ${record[i].losses} || ${(record[i].wins / (record[i].wins + record[i].losses)).toFixed(3)}\n`
-                if (i == 0) {
-                    standingsMessage = standingsMessage + '```';
-                }
+                firstStandingsEmbed.addField('' + place, `Username: ${displayedUsername}\nWins: ${record[i].wins}\nLosses: ${record[i].losses}\nPoints: ${record[i].points}`);
                 place++;
             }
-            message.channel.send(standingsMessage);
+            for (let i = place; i >= 0; i--) {
+                let displayedUsername = (await bot.users.fetch(record[i].id)).username;
+                secondStandingsEmbed.addField('' + place, `Username: ${displayedUsername}\nWins: ${record[i].wins}\nLosses: ${record[i].losses}\nPoints: ${record[i].points}`);
+                place++;
+            }
+            message.channel.send({ embeds: [firstStandingsEmbed] });
+            const channel = bot.channels.cache.get('834170049416790067');
+            let mostRecentMessage = channel.messages.fetch(channel.lastMessageId);
+            paginationEmbed(mostRecentMessage, pages, buttonList, timeout);
         }
         if (command === "ot") {
             let profileData = await profileModel.findOne({ userID: message.author.id });
@@ -222,18 +327,28 @@ bot.on('message', message => {
         } else if (command === "record") {
             let profileData = await profileModel.findOne({ userID: message.author.id });
             if (profileData == undefined) {
-                message.channel.send(`${message.author}, you have not signed up for OT Bot so you do not have a record. Use the command !ot to sign up.`);
-            } else if (profileData.wins > profileData.losses) {
-                message.channel.send(`${message.author} has ${profileData.wins} wins and ${profileData.losses} losses. Looking like the Hurricanes with that record...keep it up!`);
+                message.channel.send('```You have not signed up! Here are the following commands. Make sure to sign up via the OT command first!\n\n!ot ‒ Signs a user up for OT bot.\n!record ‒ Displays a users stats.\n!standings ‒ Displays a standing of everyone participating in OT Bot challenge.```');
             } else {
-                message.channel.send(`${message.author} has ${profileData.wins} wins and ${profileData.losses} losses. Looking like the Red Wings with that record right now...yikes.`);
+                let status = "";
+                if (profileData.wins > profileData.losses) {
+                    status = "Fuckin champ behavior right here eh.";
+                    if (profileData.streak >= 3) {
+                        status = "BUDDY IS ON A HEATER BOYS WATCH OUT";
+                    }
+                } else {
+                    status = "u are so fucking dogwater get it together";
+                    if (profileData.streak >= 3) {
+                        status = "ur still ass but keep it up";
+                    }
+                }
+                message.channel.send('```Breakdown for ' + `${(await bot.users.fetch(message.author.id)).username}\n\n Wins: ${profileData.wins}\n Losses: ${profileData.losses}\n Points: ${profileData.points} \n Current Streak: ${profileData.streak}\n Status: ${status}` + '```');
             }
         } else if (command === "stop" && message.author.id === '443437518336163841') {
             clearInterval(runBot);
             message.channel.send(`OTBot has stopped fetching API data. How are you going to know the scores now???`);
         } else if (command === "reset" && message.author.id === '443437518336163841') {
             await profileModel.updateMany({
-            }, { points: 0, wins: 0, losses: 0 });
+            }, { points: 0, wins: 0, losses: 0, streak: 0 });
             message.channel.send(`Standings reset. A new season has begun!`);
         }
     }
@@ -241,13 +356,10 @@ bot.on('message', message => {
 // This function takes our user data and uploads it to the MongoDB server.
 async function updateData(numOfUsers) {
     // Creates a map for points, wins, and losses each.
-    let map = new Map();
+    let pointsMap = new Map();
     let winMap = new Map();
     let loseMap = new Map();
-    const allocatedPoints = numOfUsers / (correct.length - 1);
-    correct.forEach(user => {
-        map.set(user, allocatedPoints * streakmap.get(await(profileModel.findOne({ userID: message.author.id }).streak)));
-    });
+    const allocatedPoints = Math.round(numOfUsers / (correct.length - 1) * 10) / 10;
 
     correct.forEach(async user => {
         winMap.set(user, 1);
@@ -261,6 +373,28 @@ async function updateData(numOfUsers) {
             });
     });
 
+    correct.forEach(async user => {
+        let profileData = await profileModel.findOne({ userID: user });
+        if (profileData == undefined) {
+            profile = profileModel.create({
+                userID: user,
+                points: 0,
+                wins: 0,
+                losses: 0
+            });
+            profile.save();
+        }
+        const userStreakPoints = streakmap.get((await (profileModel.findOne({ userID: user }))).streak);
+        pointsMap.set(user, Math.round((allocatedPoints * userStreakPoints) * 10) / 10);
+        await profileModel.findOneAndUpdate({
+            userID: user,
+        },
+            {
+                $inc: {
+                    points: pointsMap.get(user),
+                },
+            });
+    });
     incorrect.forEach(async user => {
         loseMap.set(user, 1);
         await profileModel.findOneAndUpdate({
@@ -273,20 +407,9 @@ async function updateData(numOfUsers) {
             });
     });
     // Converts each map to an Array of key-value pair objects.
-    let values = Array.from(map, ([name, value]) => ({ name, value }));
     let winValues = Array.from(winMap, ([name, value]) => ({ name, value }));
     let loseValues = Array.from(loseMap, ([name, value]) => ({ name, value }));
     // These loops update each participating user profile in the MongoDB server.
-    for (let i = 0; i < values.length; i++) {
-        await profileModel.findOneAndUpdate({
-            userID: values[i].name,
-        },
-            {
-                $inc: {
-                    points: values[i].value,
-                },
-            });
-    }
     for (let i = 0; i < winValues.length; i++) {
         await profileModel.findOneAndUpdate({
             userID: winValues[i].name,
