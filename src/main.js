@@ -137,7 +137,6 @@ async function getSchedule() {
     // Uses the schedule API to get our game IDs to track live data.
     if (schedule.dates[0] == undefined) {
         clearInterval(runBot);
-
         return;
     }
     let games = schedule.dates[0].games.map(game => game.gamePk);
@@ -151,7 +150,6 @@ async function getSchedule() {
         const gameData = await gameResponse.json();
         gameDataArray.push(gameData);
     }
-    let gameDataArray = [];
 
     // Scans all NHL games for overtime
     for (let i = 0; i < gameDataArray.length; i++) {
