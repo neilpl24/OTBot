@@ -193,11 +193,6 @@ async function getSchedule() {
                     getWin()
                 }, 10000);
                 async function getWin() {
-                    // Remove this code after
-                    const res = await axios({
-                        method: 'get',
-                        url: `/getfinishedgame`,
-                    });
                     const res = await fetch(gameUrls[i]);
                     const gameEnded = res.data;
                     // Continues the getWin() function once the game ends.
