@@ -303,7 +303,7 @@ bot.on('message', message => {
                 place++;
             }
             message.channel.send({ embeds: [firstStandingsEmbed] });
-            const channel = bot.channels.cache.get('834170049416790067');
+            const channel = bot.channels.cache.get('767641477736038410');
             let mostRecentMessage = channel.messages.fetch(channel.lastMessageId);
             paginationEmbed(mostRecentMessage, pages, buttonList, timeout);
         }
