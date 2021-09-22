@@ -279,7 +279,7 @@ bot.on('message', message => {
                 .setColor('#0099ff')
                 .setTitle('Second Page')
                 .setDescription((await bot.users.fetch(record[record.length - 1].id)).username + ' leads the way!')
-                .setImage('https://ibb.co/tPRLRvv')
+                .setImage('https://i.ibb.co/ZfH4qLs/kane.jpg')
                 .setFooter('Check your streaks and personal record using the !record command!');
             const pages = [
                 firstStandingsEmbed,
