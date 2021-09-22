@@ -53,7 +53,7 @@ const paginationEmbed = async (msg, pages, buttonList, timeout = 120000) => {
     let page = 0;
 
     const row = new MessageActionRow().addComponents(buttonList);
-    const curPage = await bot.channels.cache.get('834170049416790067').send({
+    const curPage = await bot.channels.cache.get('767641477736038410').send({
         embeds: [pages[page].setFooter(`Page ${page + 1} / ${pages.length}`)],
         components: [row],
     });
