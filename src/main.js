@@ -169,7 +169,7 @@ bot.on('message', message => {
             return;
         }
         if (command === "commands") {
-            message.channel.send('```Here are the following commands. Make sure to sign up via the OT command first!\n\n!ot ‒ Signs a user up for OT bot.\n!record ‒ Displays a users stats.\n!standings ‒ Displays a standing of everyone participating in OT Bot challenge.```');
+            message.channel.send('```Here are the following commands. Make sure to sign up via the OT command first!\n\n!ot ‒ Signs a user up for OT bot.\n!record ‒ Displays a users stats.```');
         }
         if (command === "ot") {
             let profileData = await profileModel.findOne({ userID: message.author.id });
