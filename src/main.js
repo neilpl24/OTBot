@@ -1,6 +1,5 @@
 const scheduleUrl = "https://statsapi.web.nhl.com/api/v1/schedule";
 const fetch = require("node-fetch");
-let axios = require('axios');
 // otGames prevents the bot from sending duplicate messages about an overtime game.
 let otGames = [];
 // Keeps track of who got their picks right or wrong.
@@ -12,98 +11,11 @@ const mongoose = require("mongoose");
 const nhlmap = require("../src/nhlmap");
 const numbermap = require("../src/numbermap");
 const streakmap = require("../src/streakmap");
-const { Client, Intents, MessageButton, MessageEmbed } = require('discord.js');
-
-const button1 = new MessageButton()
-    .setCustomId("previousbtn")
-    .setLabel("Previous")
-    .setStyle("DANGER");
-
-const button2 = new MessageButton()
-    .setCustomId("nextbtn")
-    .setLabel("Next")
-    .setStyle("SUCCESS");
-
-const buttonList = [button1, button2];
+const { Client, Intents, MessageEmbed } = require('discord.js');
 
 global.Discord = require('discord.js');
-const {
-    MessageActionRow,
-    Message
-} = require("discord.js");
 
-/**
- * Creates a pagination embed
- * @param {Message} msg
- * @param {MessageEmbed[]} pages
- * @param {MessageButton[]} buttonList
- * @param {number} timeout
- * @returns
- */
-const paginationEmbed = async (msg, pages, buttonList, timeout = 120000) => {
-    if (!msg && !msg.channel) throw new Error("Channel is inaccessible.");
-    if (!pages) throw new Error("Pages are not given.");
-    if (!buttonList) throw new Error("Buttons are not given.");
-    if (buttonList[0].style === "LINK" || buttonList[1].style === "LINK")
-        throw new Error(
-            "Link buttons are not supported with discordjs-button-pagination"
-        );
-    if (buttonList.length !== 2) throw new Error("Need two buttons.");
-
-    let page = 0;
-
-    const row = new MessageActionRow().addComponents(buttonList);
-    const curPage = await bot.channels.cache.get('767641477736038410').send({
-        embeds: [pages[page].setFooter(`Page ${page + 1} / ${pages.length}`)],
-        components: [row],
-    });
-
-    const filter = (i) =>
-        i.customId === buttonList[0].customId ||
-        i.customId === buttonList[1].customId;
-
-    const collector = await curPage.createMessageComponentCollector({
-        filter,
-        time: timeout,
-    });
-
-    collector.on("collect", async (i) => {
-        switch (i.customId) {
-            case buttonList[0].customId:
-                page = page > 0 ? --page : pages.length - 1;
-                break;
-            case buttonList[1].customId:
-                page = page + 1 < pages.length ? ++page : 0;
-                break;
-            default:
-                break;
-        }
-        await i.deferUpdate();
-        await i.editReply({
-            embeds: [pages[page].setFooter(`Page ${page + 1} / ${pages.length}`)],
-            components: [row],
-        });
-        collector.resetTimer();
-    });
-
-    collector.on("end", () => {
-        if (!curPage.deleted) {
-            const disabledRow = new MessageActionRow().addComponents(
-                buttonList[0].setDisabled(true),
-                buttonList[1].setDisabled(true)
-            );
-            curPage.edit({
-                embeds: [pages[page].setFooter(`Page ${page + 1} / ${pages.length}`)],
-                components: [disabledRow],
-            });
-        }
-    });
-
-    return curPage;
-};
-module.exports = paginationEmbed;
 require('dotenv').config();
-
 
 const bot = new Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES] });
 
@@ -122,7 +34,7 @@ mongoose.connect(process.env.MONGODB_SRV, {
     console.log(err);
 });
 
-// This setInterval function runs getSchedule() every 10 seconds so that we are receiving up to date data.
+// This setInterval function runs getSchedule() every 3 seconds so that we are receiving up to date data.
 let runBot = setInterval(function () {
     getSchedule();
 }, 3000);
@@ -259,48 +171,6 @@ bot.on('message', message => {
         if (command === "commands") {
             message.channel.send('```Here are the following commands. Make sure to sign up via the OT command first!\n\n!ot ‒ Signs a user up for OT bot.\n!record ‒ Displays a users stats.\n!standings ‒ Displays a standing of everyone participating in OT Bot challenge.```');
         }
-        if (command === "standings") {
-            let profiles = await profileModel.find();
-            // We don't want the bot in the table.
-            profiles = profiles.filter(profile => profile.userID != 819643466720083989);
-            const record = profiles.map(profile => ({ id: profile.userID, wins: profile.wins, points: profile.points, losses: profile.losses }));
-            // Adjust as needed to format table spacing between table data and user names
-            record.sort((a, b) => {
-                return a.points - b.points;
-            });
-            let place = 1;
-            const firstStandingsEmbed = new MessageEmbed()
-                .setColor('#0099ff')
-                .setTitle('First Page')
-                .setDescription((await bot.users.fetch(record[record.length - 1].id)).username + ' leads the way!')
-                .setImage("https://i.ibb.co/f4PYMqY/alec.jpg")
-                .setFooter('Check your streaks and personal record using the !record command!');
-            const secondStandingsEmbed = new MessageEmbed()
-                .setColor('#0099ff')
-                .setTitle('Second Page')
-                .setDescription((await bot.users.fetch(record[record.length - 1].id)).username + ' leads the way!')
-                .setImage('https://i.ibb.co/ZfH4qLs/kane.jpg')
-                .setFooter('Check your streaks and personal record using the !record command!');
-            const pages = [
-                firstStandingsEmbed,
-                secondStandingsEmbed,
-            ];
-            const timeout = 10000;
-            for (let i = record.length - 1; i >= 5; i--) {
-                let displayedUsername = (await bot.users.fetch(record[i].id)).username;
-                firstStandingsEmbed.addField('' + place, `Username: ${displayedUsername}\nWins: ${record[i].wins}\nLosses: ${record[i].losses}\nPoints: ${record[i].points}`);
-                place++;
-            }
-            for (let i = place; i >= 0; i--) {
-                let displayedUsername = (await bot.users.fetch(record[i].id)).username;
-                secondStandingsEmbed.addField('' + place, `Username: ${displayedUsername}\nWins: ${record[i].wins}\nLosses: ${record[i].losses}\nPoints: ${record[i].points}`);
-                place++;
-            }
-            message.channel.send({ embeds: [firstStandingsEmbed] });
-            const channel = bot.channels.cache.get('767641477736038410');
-            let mostRecentMessage = channel.messages.fetch(channel.lastMessageId);
-            paginationEmbed(mostRecentMessage, pages, buttonList, timeout);
-        }
         if (command === "ot") {
             let profileData = await profileModel.findOne({ userID: message.author.id });
             let profile;
@@ -424,5 +294,39 @@ async function updateData(numOfUsers) {
                 },
             });
     }
+    let profiles = await profileModel.find();
+    // We don't want the bot in the table.
+    profiles = profiles.filter(profile => profile.userID != 819643466720083989);
+    const record = profiles.map(profile => ({ id: profile.userID, wins: profile.wins, points: profile.points, losses: profile.losses }));
+    // Adjust as needed to format table spacing between table data and user names
+    record.sort((a, b) => {
+        return a.points - b.points;
+    });
+    let place = 1;
+    const firstStandingsEmbed = new MessageEmbed()
+        .setColor('#0099ff')
+        .setTitle('First Page')
+        .setDescription((await bot.users.fetch(record[record.length - 1].id)).username + ' leads the way!')
+        .setImage("https://i.ibb.co/f4PYMqY/alec.jpg")
+        .setFooter('Check your streaks and personal record using the !record command!');
+    const secondStandingsEmbed = new MessageEmbed()
+        .setColor('#0099ff')
+        .setTitle('Second Page')
+        .setDescription((await bot.users.fetch(record[record.length - 1].id)).username + ' leads the way among the bottom half (losers) !')
+        .setImage('https://i.ibb.co/ZfH4qLs/kane.jpg')
+        .setFooter('Check your streaks and personal record using the !record command!');
+    for (let i = record.length - 1; i >= 5; i--) {
+        let displayedUsername = (await bot.users.fetch(record[i].id)).username;
+        firstStandingsEmbed.addField('' + place, `Username: ${displayedUsername}\nWins: ${record[i].wins}\nLosses: ${record[i].losses}\nPoints: ${record[i].points}`);
+        place++;
+    }
+    for (let i = place; i >= 0; i--) {
+        let displayedUsername = (await bot.users.fetch(record[i].id)).username;
+        secondStandingsEmbed.addField('' + place, `Username: ${displayedUsername}\nWins: ${record[i].wins}\nLosses: ${record[i].losses}\nPoints: ${record[i].points}`);
+        place++;
+    }
+    const standingsChannel = bot.channels.cache.get('892804270259331082');
+    standingsChannel.send({ embeds: [firstStandingsEmbed] });
+    standingsChannel.send({ embeds: [secondStandingsEmbed] });
 }
 bot.login(process.env.DISCORDJS_BOT_TOKEN);
