@@ -68,7 +68,7 @@ async function getSchedule() {
         // This is the channel the bot will send messages in.
         const channel = bot.channels.cache.get('819792691511558184');
         // Determines if a game is in overtime or not.
-        if ((gameDataArray[i].liveData.linescore.currentPeriod == 3 || gameDataArray[i].liveData.linescore.currentPeriod == 4) && gameDataArray[i].liveData.linescore.intermissionInfo.inIntermission) {
+        if (gameDataArray[i].liveData.linescore.currentPeriod == 3 && gameDataArray[i].liveData.linescore.currentPeriodTimeRemaining == 'END' && gameDataArray[i].liveData.linescore.teams.home.goals == gameDataArray[i].liveData.linescore.teams.away.goals) {
             if (!otGames.includes(gameDataArray[i].gameData.game.pk)) {
                 let awayUsers = [];
                 let homeUsers = [];
