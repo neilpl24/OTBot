@@ -181,8 +181,6 @@ bot.on('message', message => {
                     points: 0,
                     wins: 0,
                     losses: 0
-                }).then(() => {
-                    profile.save();
                 });
                 message.channel.send(`${message.author} has signed up for OTBot!`);
             } else {
