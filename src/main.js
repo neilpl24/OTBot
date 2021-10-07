@@ -2,6 +2,7 @@ const scheduleUrl = "https://statsapi.web.nhl.com/api/v1/schedule";
 const fetch = require("node-fetch");
 // otGames prevents the bot from sending duplicate messages about an overtime game.
 let otGames = [];
+let potentialOTgames = [];
 // Keeps track of who got their picks right or wrong.
 let correct = [];
 let incorrect = [];
@@ -135,6 +136,21 @@ async function getSchedule() {
                         }
                     }
                 }
+            }
+        }
+        // Shoutout Niko @ https://stackoverflow.com/a/9640417
+        let timeRemaining = gameDataArray[i].liveData.linescore.currentPeriodTimeRemaining;
+        if (gameDataArray[i].liveData.linescore.currentPeriod == 3 && timeRemaining.includes(':') && !potentialOTgames.includes(gameDataArray[i].gameData.game.pk)) {
+            timeRemaining = timeRemaining.split(':');
+            let seconds = 0;
+            let minutes = 1;
+            while (timeRemaining.length > 0) {
+                seconds += minutes * parseInt(timeRemaining.pop(), 10);
+                minutes *= 60;
+            }
+            if (seconds < 300 && gameDataArray[i].liveData.linescore.teams.home.goals == gameDataArray[i].liveData.linescore.teams.away.goals) {
+                potentialOTgames.push(gameDataArray[i].gameData.game.pk);
+                channel.send(`The ${gameEnded.liveData.linescore.teams.home.team.name} and the ${gameEnded.liveData.linescore.teams.away.team.name} are currently tied with ${gameDataArray[i].liveData.linescore.currentPeriodTimeRemaining} remaining. Keep an eye out! @everyone`);
             }
         }
     }
