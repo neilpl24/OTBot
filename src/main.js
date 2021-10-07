@@ -301,6 +301,7 @@ async function updateData(numOfUsers) {
         return a.points - b.points;
     });
     let place = record.length;
+    let ranking = 1;
     const firstStandingsEmbed = new MessageEmbed()
         .setColor('#0099ff')
         .setTitle('First Page')
@@ -314,13 +315,14 @@ async function updateData(numOfUsers) {
         .setFooter('Check your streaks and personal record using the !record command!');
     for (let i = record.length - 1; i >= 7; i--) {
         let displayedUsername = (await bot.users.fetch(record[i].id)).username;
-        firstStandingsEmbed.addField('' + place, `Username: ${displayedUsername}\nWins: ${record[i].wins}\nLosses: ${record[i].losses}\nPoints: ${record[i].points}`);
+        firstStandingsEmbed.addField('' + ranking, `Username: ${displayedUsername}\nWins: ${record[i].wins}\nLosses: ${record[i].losses}\nPoints: ${record[i].points}`);
         place--;
+        ranking++;
     }
-    for (let i = place; i >= 0; i--) {
+    for (let i = place - 1; i >= 0; i--) {
         let displayedUsername = (await bot.users.fetch(record[i].id)).username;
         secondStandingsEmbed.addField('' + place, `Username: ${displayedUsername}\nWins: ${record[i].wins}\nLosses: ${record[i].losses}\nPoints: ${record[i].points}`);
-        place--;
+        ranking++;
     }
     const standingsChannel = bot.channels.cache.get('892804270259331082');
     standingsChannel.send({ embeds: [firstStandingsEmbed] });
