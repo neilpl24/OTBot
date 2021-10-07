@@ -77,7 +77,7 @@ async function getSchedule() {
                 const awayTeam = gameDataArray[i].liveData.linescore.teams.away;
                 home = homeTeam.team.name;
                 away = awayTeam.team.name;
-                channel.send(`The ${homeTeam.team.name} take on the ${awayTeam.team.name} in overtime! Who is your pick? You have 4 minutes! React with the emotes below. @everyone`);
+                channel.send(`The ${homeTeam.team.name} take on the ${awayTeam.team.name} in overtime! Who is your pick? You have 2 minutes! React with the emotes below. @everyone`);
                 // Fetches the reactions from the OT games after 5 minutes.
                 setTimeout(async () => {
                     const messages = await channel.messages.fetch({ limit: 4 });
@@ -99,7 +99,7 @@ async function getSchedule() {
                             });
                         })
                     });
-                }, 240000);
+                }, 120000);
                 // Calls the getWin() function until the game in question has ended.
                 let over = setInterval(function () {
                     getWin()
