@@ -148,9 +148,9 @@ async function getSchedule() {
                 seconds += minutes * parseInt(timeRemaining.pop(), 10);
                 minutes *= 60;
             }
-            if (seconds < 300 && gameDataArray[i].liveData.linescore.teams.home.goals == gameDataArray[i].liveData.linescore.teams.away.goals) {
+            if (seconds < 120 && gameDataArray[i].liveData.linescore.teams.home.goals == gameDataArray[i].liveData.linescore.teams.away.goals) {
                 potentialOTgames.push(gameDataArray[i].gameData.game.pk);
-                channel.send(`The ${gameDataArray[i].liveData.linescore.teams.home.team.name} and the ${gameDataArray[i].liveData.linescore.teams.away.team.name} are currently tied with ${gameDataArray[i].liveData.linescore.currentPeriodTimeRemaining} remaining. Keep an eye out! @everyone`);
+                bot.channels.cache.get(895730626504822816).send(`The ${gameDataArray[i].liveData.linescore.teams.home.team.name} and the ${gameDataArray[i].liveData.linescore.teams.away.team.name} are currently tied with ${gameDataArray[i].liveData.linescore.currentPeriodTimeRemaining} remaining. Keep an eye out! @everyone`);
             }
         }
     }
@@ -337,7 +337,7 @@ async function updateData(numOfUsers) {
     }
     for (let i = place - 1; i >= 0; i--) {
         let displayedUsername = (await bot.users.fetch(record[i].id)).username;
-        secondStandingsEmbed.addField('' + place, `Username: ${displayedUsername}\nWins: ${record[i].wins}\nLosses: ${record[i].losses}\nPoints: ${record[i].points}`);
+        secondStandingsEmbed.addField('' + ranking, `Username: ${displayedUsername}\nWins: ${record[i].wins}\nLosses: ${record[i].losses}\nPoints: ${record[i].points}`);
         ranking++;
     }
     const standingsChannel = bot.channels.cache.get('892804270259331082');
