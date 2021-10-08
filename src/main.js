@@ -164,8 +164,8 @@ bot.on('message', message => {
     if (message.content.includes('React with the emotes below') && message.author.id == '819643466720083989') {
         message.react(message.guild.emojis.cache.find(emoji => emoji.name === nhlmap.get(home)));
         message.react(message.guild.emojis.cache.find(emoji => emoji.name === nhlmap.get(away)));
-        message.react(numbermap.get(4));
-        let minsLeft = 3;
+        message.react(numbermap.get(2));
+        let minsLeft = 1;
         let otTimer = setInterval(() => {
             message.reactions.cache.get(numbermap.get(minsLeft + 1)).remove();
             message.react(numbermap.get(minsLeft));
