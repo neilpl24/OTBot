@@ -149,7 +149,7 @@ async function getSchedule() {
                 seconds += minutes * parseInt(timeRemaining.pop(), 10);
                 minutes *= 60;
             }
-            if (seconds < 300 && gameDataArray[i].liveData.linescore.teams.home.goals == gameDataArray[i].liveData.linescore.teams.away.goals) {
+            if (seconds < 120 && gameDataArray[i].liveData.linescore.teams.home.goals == gameDataArray[i].liveData.linescore.teams.away.goals) {
                 potentialOTgames.push(gameDataArray[i].gameData.game.pk);
                 channel.send(`The ${gameEnded.liveData.linescore.teams.home.team.name} and the ${gameEnded.liveData.linescore.teams.away.team.name} are currently tied with ${gameDataArray[i].liveData.linescore.currentPeriodTimeRemaining} remaining. Keep an eye out! @everyone`);
             }
