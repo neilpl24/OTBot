@@ -151,7 +151,7 @@ async function getSchedule() {
             }
             if (seconds < 120 && gameDataArray[i].liveData.linescore.teams.home.goals == gameDataArray[i].liveData.linescore.teams.away.goals) {
                 potentialOTgames.push(gameDataArray[i].gameData.game.pk);
-                channel.send(`The ${gameEnded.liveData.linescore.teams.home.team.name} and the ${gameEnded.liveData.linescore.teams.away.team.name} are currently tied with ${gameDataArray[i].liveData.linescore.currentPeriodTimeRemaining} remaining. Keep an eye out! @everyone`);
+                bot.channels.cache.get(895730626504822816).send(`The ${gameDataArray[i].liveData.linescore.teams.home.team.name} and the ${gameDataArray[i].liveData.linescore.teams.away.team.name} are currently tied with ${gameDataArray[i].liveData.linescore.currentPeriodTimeRemaining} remaining. Keep an eye out! @everyone`);
             }
         }
     }
@@ -165,8 +165,8 @@ bot.on('message', message => {
     if (message.content.includes('React with the emotes below') && message.author.id == '819643466720083989') {
         message.react(message.guild.emojis.cache.find(emoji => emoji.name === nhlmap.get(home)));
         message.react(message.guild.emojis.cache.find(emoji => emoji.name === nhlmap.get(away)));
-        message.react(numbermap.get(4));
-        let minsLeft = 3;
+        message.react(numbermap.get(2));
+        let minsLeft = 1;
         let otTimer = setInterval(() => {
             message.reactions.cache.get(numbermap.get(minsLeft + 1)).remove();
             message.react(numbermap.get(minsLeft));
@@ -338,7 +338,7 @@ async function updateData(numOfUsers) {
     }
     for (let i = place - 1; i >= 0; i--) {
         let displayedUsername = (await bot.users.fetch(record[i].id)).username;
-        secondStandingsEmbed.addField('' + place, `Username: ${displayedUsername}\nWins: ${record[i].wins}\nLosses: ${record[i].losses}\nPoints: ${record[i].points}`);
+        secondStandingsEmbed.addField('' + ranking, `Username: ${displayedUsername}\nWins: ${record[i].wins}\nLosses: ${record[i].losses}\nPoints: ${record[i].points}`);
         ranking++;
     }
     const standingsChannel = bot.channels.cache.get('892804270259331082');
