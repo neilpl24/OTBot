@@ -151,7 +151,7 @@ async function getSchedule() {
             }
             if (seconds < 120 && gameDataArray[i].liveData.linescore.teams.home.goals == gameDataArray[i].liveData.linescore.teams.away.goals) {
                 potentialOTgames.push(gameDataArray[i].gameData.game.pk);
-                bot.channels.cache.get(895730626504822816).send(`The ${gameDataArray[i].liveData.linescore.teams.home.team.name} and the ${gameDataArray[i].liveData.linescore.teams.away.team.name} are currently tied with ${gameDataArray[i].liveData.linescore.currentPeriodTimeRemaining} remaining. Keep an eye out! @everyone`);
+                //bot.channels.cache.get(895730626504822816).send(`The ${gameDataArray[i].liveData.linescore.teams.home.team.name} and the ${gameDataArray[i].liveData.linescore.teams.away.team.name} are currently tied with ${gameDataArray[i].liveData.linescore.currentPeriodTimeRemaining} remaining. Keep an eye out! @everyone`);
             }
         }
     }
