@@ -47,11 +47,12 @@ let runBot = setInterval(function () {
 async function getSchedule() {
     const response = await fetch(scheduleUrl);
     const schedule = await response.json();
-    // Uses the schedule API to get our game IDs to track live data.
+    // Stops running the function if there's no games that day
     if (schedule.dates[0] == undefined) {
         clearInterval(runBot);
         return;
     }
+    // Uses the schedule API to get our game IDs to track live data.
     let games = schedule.dates[0].games.map(game => game.gamePk);
     games.sort();
     let gameUrls = games.map(gamePk => `https://statsapi.web.nhl.com/api/v1/game/${gamePk}/feed/live?site=en_nhl`);
@@ -71,6 +72,7 @@ async function getSchedule() {
         // Determines if a game is in overtime or not.
         if ((gameDataArray[i].liveData.linescore.currentPeriod == 3 && gameDataArray[i].liveData.linescore.currentPeriodTimeRemaining == 'END' && gameDataArray[i].liveData.linescore.teams.home.goals == gameDataArray[i].liveData.linescore.teams.away.goals)
             || ((gameDataArray[i].liveData.linescore.currentPeriod == 3 || gameDataArray[i].liveData.linescore.currentPeriod == 4) && gameDataArray[i].liveData.linescore.intermissionInfo.inIntermission)) {
+            // Prevents the bot from sending messages multiple times about overtime.
             if (!otGames.includes(gameDataArray[i].gameData.game.pk)) {
                 let awayUsers = [];
                 let homeUsers = [];
@@ -140,6 +142,7 @@ async function getSchedule() {
             }
         }
         // Shoutout Niko @ https://stackoverflow.com/a/9640417
+        // This function notifies users if a game is tied with less than 2 minutes left.
         let timeRemaining = gameDataArray[i].liveData.linescore.currentPeriodTimeRemaining;
         if (gameDataArray[i].liveData.linescore.currentPeriod == 3 && timeRemaining.includes(':') && !potentialOTgames.includes(gameDataArray[i].gameData.game.pk)) {
             timeRemaining = timeRemaining.split(':');
@@ -161,7 +164,7 @@ const profileModel = require("../models/profileSchema")
 // This function displays the amount of minutes left users have to lock in their pick via emote reaction.
 // Message event listener
 bot.on('message', message => {
-    // Autogenerates reactions for the overtime game.
+    // Autogenerates reactions displaying time left to vote for the overtime game.
     if (message.content.includes('React with the emotes below') && message.author.id == '819643466720083989') {
         message.react(message.guild.emojis.cache.find(emoji => emoji.name === nhlmap.get(home)));
         message.react(message.guild.emojis.cache.find(emoji => emoji.name === nhlmap.get(away)));
@@ -320,6 +323,7 @@ async function updateData(numOfUsers) {
     });
     let place = record.length;
     let ranking = 1;
+    // Creates the messages used in the standings channel
     const firstStandingsEmbed = new MessageEmbed()
         .setColor('#0099ff')
         .setTitle('First Page')
