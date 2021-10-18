@@ -71,7 +71,7 @@ async function getSchedule() {
         const channel = bot.channels.cache.get('819792691511558184');
         // Determines if a game is in overtime or not.
         if ((gameDataArray[i].liveData.linescore.currentPeriod == 3 && gameDataArray[i].liveData.linescore.currentPeriodTimeRemaining == 'END' && gameDataArray[i].liveData.linescore.teams.home.goals == gameDataArray[i].liveData.linescore.teams.away.goals)
-            || ((gameDataArray[i].liveData.linescore.currentPeriod == 3 || gameDataArray[i].liveData.linescore.currentPeriod == 4) && gameDataArray[i].liveData.linescore.intermissionInfo.inIntermission)) {
+            || ((gameDataArray[i].liveData.linescore.currentPeriod == 3 || gameDataArray[i].liveData.linescore.currentPeriod == 4) && gameDataArray[i].liveData.linescore.intermissionInfo.inIntermission) || (gameDataArray[i].liveData.linescore.currentPeriod == 4 && gameDataArray[i].liveData.linescore.currentPeriodTimeRemaining == '5:00')) {
             // Prevents the bot from sending messages multiple times about overtime.
             if (!otGames.includes(gameDataArray[i].gameData.game.pk)) {
                 let awayUsers = [];
