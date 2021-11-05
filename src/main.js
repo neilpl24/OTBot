@@ -83,11 +83,14 @@ async function getSchedule() {
                 away = awayTeam.team.name;
                 channel.send(`The ${homeTeam.team.name} take on the ${awayTeam.team.name} in overtime! Who is your pick? You have 2 minutes! React with the emotes below. @everyone`);
                 // Fetches the reactions from the OT games after 5 minutes.
+                const otMessage = await channel.messages.fetch({ limit: 1 });
+                let otString = otMessage.content;
                 setTimeout(async () => {
                     const messages = await channel.messages.fetch({ limit: 4 });
                     let homeID;
+                    // Prevents OT games overlapping each other
                     messages.forEach(function (value, key) {
-                        if (value.content.includes(home)) {
+                        if (value.content == otString) {
                             homeID = value;
                         }
                     });
