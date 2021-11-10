@@ -32,8 +32,9 @@ Win streak multipliers are now in OTBot. Starting at 3 wins, a multiplier is add
 | :-----:| :-: | :-: | :-: | :-: | :-: |
 | Points | 1.2 | 1.4 | 1.6 | 1.8 | 2.0 |
 
-# Standings Channel
-<img src="https://imgur.com/a/ytt86ML.png">
+# Standings Channel'
+Instead of having standings as a record, OTBot uses a new feature from Discord 13 called embeds. After the conclusion of each overtime game, the bot will send out the new standings.
+<img src="https://imgur.com/ytt86ML.png">
 
 ## Commands
 OT Bot has a few commands that run using a message event listener while it simultaneously fetches data from ongoing games. 
