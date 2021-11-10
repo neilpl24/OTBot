@@ -25,14 +25,14 @@ let runBot = setInterval(function(){
 
 ## New Changes (October 2021)
 
-# Multipliers
+### Multipliers
 Win streak multipliers are now in OTBot. Starting at 3 wins, a multiplier is added to every point spread you receieve, and a special message is generated in your personal record. Here are the streaks.
 
 | Streak |  3  |  4  |  5  |  6  | 7+  |
 | :-----:| :-: | :-: | :-: | :-: | :-: |
 | Points | 1.2 | 1.4 | 1.6 | 1.8 | 2.0 |
 
-# Standings Channel'
+### Standings Channel'
 Instead of having standings as a record, OTBot uses a new feature from Discord 13 called embeds. After the conclusion of each overtime game, the bot will send out the new standings.
 
 <img src="https://imgur.com/e6Lum4w.png" height=500>
