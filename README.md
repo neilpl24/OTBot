@@ -25,16 +25,20 @@ let runBot = setInterval(function(){
 
 ## New Changes (October 2021)
 
+# Multipliers
 Win streak multipliers are now in OTBot. Starting at 3 wins, a multiplier is added to every point spread you receieve, and a special message is generated in your personal record. Here are the streaks.
 
 | Streak |  3  |  4  |  5  |  6  | 7+  |
 | :-----:| :-: | :-: | :-: | :-: | :-: |
 | Points | 1.2 | 1.4 | 1.6 | 1.8 | 2.0 |
 
+# Standings Channel
+<img src="https://imgur.com/a/ytt86ML.png" height="100">
+
 ## Commands
 OT Bot has a few commands that run using a message event listener while it simultaneously fetches data from ongoing games. 
 ### !ot
-To keep track of users and their record of picks, I added an external server in MongoDB and linked it to OTBot. I will dive deeper into this process and how it gets updated in the demo section. Huge shoutout to [CodeLyon](https://www.youtube.com/watch?v=8no3SktqagY) for the tutorial on the setup.
+To keep track of users and their record of picks, I added an external server in MongoDB and linked it to OTBot using Mongoose. I will dive deeper into this process and how it gets updated in the demo section. Huge shoutout to [CodeLyon](https://www.youtube.com/watch?v=8no3SktqagY) for the tutorial on the setup.
 
 The !ot command signs a user up to participate in the OT picks challenge by creating an ID for them in the MongoDB database. Here is a demonstration.
 
