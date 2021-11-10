@@ -23,6 +23,13 @@ let runBot = setInterval(function(){
  getSchedule()}, 3000);
 ```
 
+## New Changes (October 2021)
+
+Win streak multipliers are now in OTBot. Starting at 3 wins, a multiplier is added to every point spread you receieve, and a special message is generated in your personal record. Here are the streaks.
+
+| Streak |  3  |  4  |  5  |  6  | 7+  |
+| :-----:| :-: | :-: | :-: | :-: | :-: |
+| Points | 1.2 | 1.4 | 1.6 | 1.8 | 2.0 |
 
 ## Commands
 OT Bot has a few commands that run using a message event listener while it simultaneously fetches data from ongoing games. 
