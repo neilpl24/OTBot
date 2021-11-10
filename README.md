@@ -1,6 +1,5 @@
 # OTBot
-OT Bot is a discord bot designed to enhance the exciting experience of NHL’s coveted 3 on 3 overtime. After an NHL game has reached the conclusion of regulation in a tie, OT Bot will notify participating users with a message saying that they have 5 minutes to lock in their pick for overtime. The bot will also provide a streaming link to the game in question. A correct pick will provide 1.5 points and a win to the winner on the server’s respective leaderboard, whereas an incorrect pick will subtract a point and add a loss.
-## Fetching NHL Data
+OT Bot is a discord bot designed to enhance the exciting experience of NHL’s coveted 3 on 3 overtime. After an NHL game has reached the conclusion of regulation in a tie, OT Bot will notify participating users with a message saying that they have 5 minutes to lock in their pick for overtime. The bot will also provide a streaming link to the game in question. All participants will contribute a point to the pot spread which will be distributed amongst the winners (Ex. 2 vote winning team, 4 vote losing team, each winner gets 3 points.)
 Before I dive in, I would like to give a special thanks to Chris Beardy for directing me to several NHL API links and projects and helping me navigate through the lengthy directories. This sped up the experimentation process and allowed me to dive straight in!
 
 Also, feel free to skip this section, this is just me going off on a tangent about the NHL's API and how fun it was to work with it.
