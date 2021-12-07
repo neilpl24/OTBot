@@ -1,6 +1,5 @@
 # OTBot
-OT Bot is a discord bot designed to enhance the exciting experience of NHL’s coveted 3 on 3 overtime. After an NHL game has reached the conclusion of regulation in a tie, OT Bot will notify participating users with a message saying that they have 5 minutes to lock in their pick for overtime. The bot will also provide a streaming link to the game in question. A correct pick will provide 1.5 points and a win to the winner on the server’s respective leaderboard, whereas an incorrect pick will subtract a point and add a loss.
-## Fetching NHL Data
+OT Bot is a discord bot designed to enhance the exciting experience of NHL’s coveted 3 on 3 overtime. After an NHL game has reached the conclusion of regulation in a tie, OT Bot will notify participating users with a message saying that they have 5 minutes to lock in their pick for overtime. The bot will also provide a streaming link to the game in question. All participants will contribute a point to the pot spread which will be distributed amongst the winners (Ex. 2 vote winning team, 4 vote losing team, each winner gets 3 points.)
 Before I dive in, I would like to give a special thanks to Chris Beardy for directing me to several NHL API links and projects and helping me navigate through the lengthy directories. This sped up the experimentation process and allowed me to dive straight in!
 
 Also, feel free to skip this section, this is just me going off on a tangent about the NHL's API and how fun it was to work with it.
@@ -24,11 +23,24 @@ let runBot = setInterval(function(){
  getSchedule()}, 3000);
 ```
 
+## New Changes (October 2021)
+
+### Multipliers
+Win streak multipliers are now in OTBot. Starting at 3 wins, a multiplier is added to every point spread you receieve, and a special message is generated in your personal record. Here are the streaks.
+
+| Streak |  3  |  4  |  5  |  6  | 7+  |
+| :-----:| :-: | :-: | :-: | :-: | :-: |
+| Points | 1.2 | 1.4 | 1.6 | 1.8 | 2.0 |
+
+### Standings Channel'
+Instead of having standings as a record, OTBot uses a new feature from Discord 13 called embeds. After the conclusion of each overtime game, the bot will send out the new standings.
+
+<img src="https://imgur.com/e6Lum4w.png" height=500>
 
 ## Commands
 OT Bot has a few commands that run using a message event listener while it simultaneously fetches data from ongoing games. 
 ### !ot
-To keep track of users and their record of picks, I added an external server in MongoDB and linked it to OTBot. I will dive deeper into this process and how it gets updated in the demo section. Huge shoutout to [CodeLyon](https://www.youtube.com/watch?v=8no3SktqagY) for the tutorial on the setup.
+To keep track of users and their record of picks, I added an external server in MongoDB and linked it to OTBot using Mongoose. I will dive deeper into this process and how it gets updated in the demo section. Huge shoutout to [CodeLyon](https://www.youtube.com/watch?v=8no3SktqagY) for the tutorial on the setup.
 
 The !ot command signs a user up to participate in the OT picks challenge by creating an ID for them in the MongoDB database. Here is a demonstration.
 
@@ -54,11 +66,7 @@ If I try to run the !ot command again, I will be notified by the bot that I have
 ### !record
 We will get to see the !record command in its proper form later on in this README, but it does contain a cool error handling feature that can direct users who have not done the !ot command to sign up for OTBot. Here is a little demo.
 
-![](https://media.giphy.com/media/YAkRFQxuVm4tVwni5y/giphy.gif)
-
-### !standings
-The standings command is very simple. It provides an ordered ranking of the players of OTBot based on win percentage. Here is a demo. The message sent by the bot is enclosed by 3 backticks to create the table in monocode.
-![](https://media.giphy.com/media/JrDoBir635TI6Nf8ZS/giphy.gif)
+![](https://media.giphy.com/media/rc57NG12a1AENI9tk9/giphy.gif)
 
 ## Demonstration
 Now that I've laid down the foundations of the bot, I am going to go through a real simulation of it. Today's (03/22/2021) overtime game I am going to use will be the New York Islanders' 2-1 win over the Philadelphia Flyers.
