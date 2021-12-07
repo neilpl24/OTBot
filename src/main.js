@@ -234,6 +234,16 @@ bot.on('message', message => {
             }, { points: 0, wins: 0, losses: 0, streak: 0 });
             message.channel.send(`Standings reset. A new season has begun!`);
         } else if (command === "standings" && message.author.id === '443437518336163841') {
+            let profiles = await profileModel.find();
+            // We don't want the bot in the table.
+            profiles = profiles.filter(profile => profile.userID != 819643466720083989);
+            const record = profiles.map(profile => ({ id: profile.userID, wins: profile.wins, points: profile.points, losses: profile.losses }));
+            // Adjust as needed to format table spacing between table data and user names
+            record.sort((a, b) => {
+                return a.points - b.points;
+            });
+            let place = record.length;
+            let ranking = 1;
             const firstStandingsEmbed = new MessageEmbed()
                 .setColor('#0099ff')
                 .setTitle('First Page')
