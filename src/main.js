@@ -91,6 +91,7 @@ async function getSchedule() {
                             homeID = value;
                         }
                     });
+                    console.log(homeID)
                     // Collects reactions and pushes userIDs to their respective arrays.
                     homeID.reactions.cache.filter(reaction => {
                         homeID.reactions.resolve(reaction).users.fetch({ limit: 100 }).then(users => {
