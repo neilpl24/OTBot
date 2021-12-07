@@ -233,6 +233,32 @@ bot.on('message', message => {
             await profileModel.updateMany({
             }, { points: 0, wins: 0, losses: 0, streak: 0 });
             message.channel.send(`Standings reset. A new season has begun!`);
+        } else if (command === "standings" && message.author.id === '443437518336163841') {
+            const firstStandingsEmbed = new MessageEmbed()
+                .setColor('#0099ff')
+                .setTitle('First Page')
+                .setDescription((await bot.users.fetch(record[record.length - 1].id)).username + ' leads the way!')
+                .setImage("https://i.ibb.co/f4PYMqY/alec.jpg")
+                .setFooter('Check your streaks and personal record using the !record command!');
+            const secondStandingsEmbed = new MessageEmbed()
+                .setColor('#0099ff')
+                .setTitle('Second Page')
+                .setImage('https://i.ibb.co/ZfH4qLs/kane.jpg')
+                .setFooter('Check your streaks and personal record using the !record command!');
+            for (let i = record.length - 1; i >= 7; i--) {
+                let displayedUsername = (await bot.users.fetch(record[i].id)).username;
+                firstStandingsEmbed.addField('' + ranking, `Username: ${displayedUsername}\nWins: ${record[i].wins}\nLosses: ${record[i].losses}\nPoints: ${record[i].points}`);
+                place--;
+                ranking++;
+            }
+            for (let i = place - 1; i >= 0; i--) {
+                let displayedUsername = (await bot.users.fetch(record[i].id)).username;
+                secondStandingsEmbed.addField('' + ranking, `Username: ${displayedUsername}\nWins: ${record[i].wins}\nLosses: ${record[i].losses}\nPoints: ${record[i].points}`);
+                ranking++;
+            }
+            const standingsChannel = bot.channels.cache.get('892804270259331082');
+            standingsChannel.send({ embeds: [firstStandingsEmbed] });
+            standingsChannel.send({ embeds: [secondStandingsEmbed] });
         }
     }
 });
