@@ -168,7 +168,6 @@ const profileModel = require("../models/profileSchema")
 // Message event listener
 bot.on('message', message => {
     // Autogenerates reactions displaying time left to vote for the overtime game.
-    bot.channels.cache.get('819792691511558184').send('``` New update!\n-You now have 10 minutes to vote.\n-There are now multipliers based on how deep a game goes to OT.\n2OT-2, 3OT-3, etc')
     if (message.content.includes('React with the emotes below') && message.author.id == '819643466720083989') {
         message.react(message.guild.emojis.cache.find(emoji => emoji.name === nhlmap.get(home)));
         message.react(message.guild.emojis.cache.find(emoji => emoji.name === nhlmap.get(away)));
