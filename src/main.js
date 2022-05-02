@@ -104,7 +104,7 @@ async function getSchedule() {
                             });
                         })
                     });
-                }, 120000);
+                }, 600000);
                 // Calls the getWin() function until the game in question has ended.
                 let over = setInterval(function () {
                     getWin()
@@ -135,8 +135,10 @@ async function getSchedule() {
                             awayUsers.forEach(user => {
                                 incorrect.push(user.id);
                             });
+
+                            const multiplier = gameEnded.liveData.linescore.currentPeriod - 3
                             // This number aggregates the total number of voters and removes the bots emote reactions from the vote total.
-                            updateData(homeUsers.length + awayUsers.length - 2);
+                            updateData(homeUsers.length + awayUsers.length - 2, multiplier);
                         }
                     }
                 }
@@ -166,10 +168,11 @@ const profileModel = require("../models/profileSchema")
 // Message event listener
 bot.on('message', message => {
     // Autogenerates reactions displaying time left to vote for the overtime game.
+    bot.channels.cache.get('819792691511558184').send('``` New update!\n-You now have 10 minutes to vote.\n-There are now multipliers based on how deep a game goes to OT.\n2OT-2, 3OT-3, etc')
     if (message.content.includes('React with the emotes below') && message.author.id == '819643466720083989') {
         message.react(message.guild.emojis.cache.find(emoji => emoji.name === nhlmap.get(home)));
         message.react(message.guild.emojis.cache.find(emoji => emoji.name === nhlmap.get(away)));
-        message.react(numbermap.get(2));
+        message.react(numbermap.get(10));
         let minsLeft = 1;
         let otTimer = setInterval(() => {
             message.reactions.cache.get(numbermap.get(minsLeft + 1)).remove();
@@ -273,13 +276,13 @@ bot.on('message', message => {
     }
 });
 // This function takes our user data and uploads it to the MongoDB server.
-async function updateData(numOfUsers) {
+async function updateData(numOfUsers, multiplier) {
     // Creates a map for points, wins, and losses each.
     let pointsMap = new Map();
     let winMap = new Map();
     let loseMap = new Map();
-    const allocatedPoints = Math.round(numOfUsers / (correct.length - 1) * 10) / 10;
-    bot.channels.cache.get('819792691511558184').send(`The amount of points each winner receieved (not accounting for streak multipliers) is ${allocatedPoints} points!`);
+    const allocatedPoints = multiplier * (Math.round(numOfUsers / (correct.length - 1) * 10) / 10);
+    bot.channels.cache.get('819792691511558184').send(`The amount of points each winner receieved (not accounting for streak multipliers) is ${allocatedPoints} points! The game went to ${multiplier} OT, so there is a ${multiplier}x multiplier!`);
 
     correct.forEach(async user => {
         winMap.set(user, 1);
