@@ -70,6 +70,7 @@ async function getSchedule() {
         // This is the channel the bot will send messages in.
         const channel = bot.channels.cache.get('819792691511558184');
         // Determines if a game is in overtime or not.
+        console.log(gameDataArray[i].liveData.linescore.currentPeriod == 3 - 2)
         if ((gameDataArray[i].liveData.linescore.currentPeriod == 3 && gameDataArray[i].liveData.linescore.currentPeriodTimeRemaining == 'END' && gameDataArray[i].liveData.linescore.teams.home.goals == gameDataArray[i].liveData.linescore.teams.away.goals)
             || ((gameDataArray[i].liveData.linescore.currentPeriod == 3 || gameDataArray[i].liveData.linescore.currentPeriod == 4) && gameDataArray[i].liveData.linescore.intermissionInfo.inIntermission) || (gameDataArray[i].liveData.linescore.currentPeriod == 4 && gameDataArray[i].liveData.linescore.currentPeriodTimeRemaining == '05:00')) {
             // Prevents the bot from sending messages multiple times about overtime.
@@ -136,7 +137,7 @@ async function getSchedule() {
                                 incorrect.push(user.id);
                             });
 
-                            const multiplier = gameEnded.liveData.linescore.currentPeriod - 3
+                            const multiplier = Number(gameEnded.liveData.linescore.currentPeriod) - 3
                             // This number aggregates the total number of voters and removes the bots emote reactions from the vote total.
                             updateData(homeUsers.length + awayUsers.length - 2, multiplier);
                         }
