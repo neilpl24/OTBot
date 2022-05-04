@@ -281,7 +281,7 @@ async function updateData(numOfUsers, multiplier) {
     let pointsMap = new Map();
     let winMap = new Map();
     let loseMap = new Map();
-    const allocatedPoints = multiplier * (Math.round(numOfUsers / (correct.length - 1) * 10) / 10);
+    const allocatedPoints = Math.round(multiplier * numOfUsers / (correct.length - 1) * 10 / 10);
     bot.channels.cache.get('819792691511558184').send(`The amount of points each winner receieved (not accounting for streak multipliers) is ${allocatedPoints} points! The game went to ${multiplier} OT, so there is a ${multiplier}x multiplier!`);
 
     correct.forEach(async user => {
