@@ -172,7 +172,7 @@ bot.on('message', message => {
         message.react(message.guild.emojis.cache.find(emoji => emoji.name === nhlmap.get(home)));
         message.react(message.guild.emojis.cache.find(emoji => emoji.name === nhlmap.get(away)));
         message.react(numbermap.get(10));
-        let minsLeft = 1;
+        let minsLeft = 9;
         let otTimer = setInterval(() => {
             message.reactions.cache.get(numbermap.get(minsLeft + 1)).remove();
             message.react(numbermap.get(minsLeft));
