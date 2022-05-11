@@ -21,6 +21,7 @@ require('dotenv').config();
 const bot = new Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES] });
 
 bot.on('ready', () => {
+    updateData(2, 1);
     console.log("OTBot is live.");
 });
 
@@ -275,14 +276,19 @@ bot.on('message', message => {
         }
     }
 });
+
+
 // This function takes our user data and uploads it to the MongoDB server.
 async function updateData(numOfUsers, multiplier) {
+    correct.push('819643466720083989', '819643466720083989');
+    incorrect.push('819643466720083989')
     // Creates a map for points, wins, and losses each.
     let pointsMap = new Map();
     let winMap = new Map();
     let loseMap = new Map();
     const allocatedPoints = Math.round(multiplier * numOfUsers / (correct.length - 1) * 10 / 10);
-    bot.channels.cache.get('819792691511558184').send(`The amount of points each winner receieved (not accounting for streak multipliers) is ${allocatedPoints} points! The game went to ${multiplier} OT, so there is a ${multiplier}x multiplier!`);
+    console.log(allocatedPoints);
+    // bot.channels.cache.get('819792691511558184').send(`The amount of points each winner receieved (not accounting for streak multipliers) is ${allocatedPoints} points! The game went to ${multiplier} OT, so there is a ${multiplier}x multiplier!`);
 
     correct.forEach(async user => {
         winMap.set(user, 1);
