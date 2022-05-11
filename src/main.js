@@ -104,11 +104,11 @@ async function getSchedule() {
                             });
                         })
                     });
-                }, 120000);
+                }, 60000);
                 // Calls the getWin() function until the game in question has ended.
                 let over = setInterval(function () {
                     getWin()
-                }, 120100);
+                }, 80000);
                 async function getWin() {
                     const res = await fetch(gameUrls[i]);
                     const gameEnded = await res.json();
@@ -117,6 +117,7 @@ async function getSchedule() {
                         clearInterval(over);
                         correct = [];
                         incorrect = [];
+                        console.log(gameEnded.liveData.linescore)
                         let multiplier = Number(gameEnded.liveData.linescore.periods.length);
                         multiplier -= 3;
                         // Alerts the users to the final score and that their data has been logged.
@@ -171,8 +172,8 @@ bot.on('message', message => {
     if (message.content.includes('React with the emotes below') && message.author.id == '819643466720083989') {
         message.react(message.guild.emojis.cache.find(emoji => emoji.name === nhlmap.get(home)));
         message.react(message.guild.emojis.cache.find(emoji => emoji.name === nhlmap.get(away)));
-        message.react(numbermap.get(2));
-        let minsLeft = 1;
+        message.react(numbermap.get(1));
+        let minsLeft = 0;
         let otTimer = setInterval(() => {
             message.reactions.cache.get(numbermap.get(minsLeft + 1)).remove();
             message.react(numbermap.get(minsLeft));
