@@ -117,9 +117,6 @@ async function getSchedule() {
                         clearInterval(over);
                         correct = [];
                         incorrect = [];
-                        console.log(gameEnded.liveData.linescore)
-                        let multiplier = Number(gameEnded.liveData.linescore.periods.length);
-                        multiplier -= 3;
                         // Alerts the users to the final score and that their data has been logged.
                         if (gameEnded.liveData.linescore.teams.away.goals >= gameEnded.liveData.linescore.teams.home.goals) {
                             channel.send(`The ${gameEnded.liveData.linescore.teams.away.team.name} have beaten the ${gameEnded.liveData.linescore.teams.home.team.name} by a score of ${gameEnded.liveData.linescore.teams.away.goals} to ${gameEnded.liveData.linescore.teams.home.goals}! I am now logging everyone's scores. You can check using the records command.`);
@@ -139,7 +136,7 @@ async function getSchedule() {
                                 incorrect.push(user.id);
                             });
                             // This number aggregates the total number of voters and removes the bots emote reactions from the vote total.
-                            updateData(homeUsers.length + awayUsers.length - 2, multiplier);
+                            updateData(homeUsers.length + awayUsers.length - 2);
                         }
                     }
                 }
@@ -279,7 +276,13 @@ bot.on('message', message => {
 
 // This function takes our user data and uploads it to the MongoDB server.
 async function updateData(numOfUsers, multiplier) {
-    console.log(multiplier);
+    const res = await fetch(gameUrls[i]);
+    const gameEnded = await res.json();
+    // Continues the getWin() function once the game ends.
+    if (gameEnded.gameData.status.abstractGameState == "Final" && otGames.includes(gameEnded.gameData.game.pk)) {
+        let multiplier = Number(gameEnded.liveData.linescore.currentPeriod);
+        multiplier -= 3;
+    }
     correct.push('819643466720083989', '819643466720083989');
     incorrect.push('819643466720083989')
     // Creates a map for points, wins, and losses each.
