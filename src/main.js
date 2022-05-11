@@ -276,6 +276,7 @@ bot.on('message', message => {
 
 // This function takes our user data and uploads it to the MongoDB server.
 async function updateData(numOfUsers, multiplier) {
+    let gameUrls = games.map(gamePk => `https://statsapi.web.nhl.com/api/v1/game/${gamePk}/feed/live?site=en_nhl`);
     const res = await fetch(gameUrls[i]);
     const gameEnded = await res.json();
     // Continues the getWin() function once the game ends.
