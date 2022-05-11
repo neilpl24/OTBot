@@ -291,6 +291,7 @@ async function updateData(numOfUsers, multiplier) {
             multiplier = Number(gameEnded.liveData.linescore.currentPeriod) - 3;
         }
     }
+
     // Creates a map for points, wins, and losses each.
     let pointsMap = new Map();
     let winMap = new Map();
