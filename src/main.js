@@ -3,6 +3,7 @@ const fetch = require("node-fetch");
 // otGames prevents the bot from sending duplicate messages about an overtime game.
 let otGames = [];
 let potentialOTgames = [];
+let loggedGames = [];
 // Keeps track of who got their picks right or wrong.
 let correct = [];
 let incorrect = [];
@@ -281,12 +282,13 @@ async function updateData(numOfUsers, multiplier) {
     let games = schedule.dates[0].games.map(game => game.gamePk);
     games.sort();
     let gameUrls = games.map(gamePk => `https://statsapi.web.nhl.com/api/v1/game/${gamePk}/feed/live?site=en_nhl`);
-    const res = await fetch(gameUrls[i]);
-    const gameEnded = await res.json();
-    // Continues the getWin() function once the game ends.
-    if (gameEnded.gameData.status.abstractGameState == "Final" && otGames.includes(gameEnded.gameData.game.pk)) {
-        let multiplier = Number(gameEnded.liveData.linescore.currentPeriod);
-        multiplier -= 3;
+    for (let i = 0; i < schedule.totalGames; i++) {
+        const res = await fetch(gameUrls[i]);
+        const gameEnded = await res.json();
+        // Continues the getWin() function once the game ends.
+        if (gameEnded.gameData.status.abstractGameState == "Final" && otGames.includes(gameEnded.gameData.game.pk) && !loggedGames.includes(gameEnded.gameData.game.pk)) {
+            multiplier = Number(gameEnded.liveData.linescore.currentPeriod) - 3;
+        }
     }
     correct.push('819643466720083989', '819643466720083989');
     incorrect.push('819643466720083989')
