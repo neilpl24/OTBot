@@ -136,7 +136,8 @@ async function getSchedule() {
                                 incorrect.push(user.id);
                             });
 
-                            const multiplier = gameEnded.liveData.linescore.currentPeriod - 3;
+                            let multiplier = gameEnded.liveData.linescore.currentPeriod;
+                            multiplier -= 3;
                             console.log(multiplier);
                             // This number aggregates the total number of voters and removes the bots emote reactions from the vote total.
                             updateData(homeUsers.length + awayUsers.length - 2, multiplier);
