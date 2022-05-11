@@ -118,6 +118,9 @@ async function getSchedule() {
                         clearInterval(over);
                         correct = [];
                         incorrect = [];
+                        console.log(gameEnded);
+                        let multiplier = Number(gameEnded.liveData.linescore.currentPeriod);
+                        multiplier -= 3;
                         // Alerts the users to the final score and that their data has been logged.
                         if (gameEnded.liveData.linescore.teams.away.goals >= gameEnded.liveData.linescore.teams.home.goals) {
                             channel.send(`The ${gameEnded.liveData.linescore.teams.away.team.name} have beaten the ${gameEnded.liveData.linescore.teams.home.team.name} by a score of ${gameEnded.liveData.linescore.teams.away.goals} to ${gameEnded.liveData.linescore.teams.home.goals}! I am now logging everyone's scores. You can check using the records command.`);
@@ -136,11 +139,6 @@ async function getSchedule() {
                             awayUsers.forEach(user => {
                                 incorrect.push(user.id);
                             });
-
-                            let multiplier = Number(gameEnded.liveData.linescore.currentPeriod);
-                            console.log(gameEnded);
-                            multiplier -= 3;
-                            console.log(multiplier);
                             // This number aggregates the total number of voters and removes the bots emote reactions from the vote total.
                             updateData(homeUsers.length + awayUsers.length - 2, multiplier);
                         }
