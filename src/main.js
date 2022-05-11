@@ -276,6 +276,8 @@ bot.on('message', message => {
 
 // This function takes our user data and uploads it to the MongoDB server.
 async function updateData(numOfUsers, multiplier) {
+    const response = await fetch(scheduleUrl);
+    const schedule = await response.json();
     let games = schedule.dates[0].games.map(game => game.gamePk);
     games.sort();
     let gameUrls = games.map(gamePk => `https://statsapi.web.nhl.com/api/v1/game/${gamePk}/feed/live?site=en_nhl`);
