@@ -69,7 +69,7 @@ async function getSchedule() {
     // Scans all NHL games for overtime
     for (let i = 0; i < gameDataArray.length; i++) {
         // This is the channel the bot will send messages in.
-        const channel = bot.channels.cache.get('834170049416790067');
+        const channel = bot.channels.cache.get('819792691511558184');
         // Determines if a game is in overtime or not.
         if ((gameDataArray[i].liveData.linescore.currentPeriod == 3 && gameDataArray[i].liveData.linescore.currentPeriodTimeRemaining == 'END' && gameDataArray[i].liveData.linescore.teams.home.goals == gameDataArray[i].liveData.linescore.teams.away.goals)
             || ((gameDataArray[i].liveData.linescore.currentPeriod == 3 || gameDataArray[i].liveData.linescore.currentPeriod == 4) && gameDataArray[i].liveData.linescore.intermissionInfo.inIntermission) || (gameDataArray[i].liveData.linescore.currentPeriod == 4 && gameDataArray[i].liveData.linescore.currentPeriodTimeRemaining == '05:00') || gameDataArray[i].gamePk == 2021030185) {
@@ -82,7 +82,7 @@ async function getSchedule() {
                 const awayTeam = gameDataArray[i].liveData.linescore.teams.away;
                 home = homeTeam.team.name;
                 away = awayTeam.team.name;
-                channel.send(`The ${homeTeam.team.name} take on the ${awayTeam.team.name} in overtime! Who is your pick? You have 2 minutes! React with the emotes below. everyone`);
+                channel.send(`The ${homeTeam.team.name} take on the ${awayTeam.team.name} in overtime! Who is your pick? You have 10 minutes! React with the emotes below. everyone`);
                 // Fetches the reactions from the OT games after 5 minutes.
                 setTimeout(async () => {
                     const messages = await channel.messages.fetch({ limit: 4 });
@@ -105,11 +105,11 @@ async function getSchedule() {
                             });
                         })
                     });
-                }, 60000);
+                }, 600000);
                 // Calls the getWin() function until the game in question has ended.
                 let over = setInterval(function () {
                     getWin()
-                }, 80000);
+                }, 1000);
                 async function getWin() {
                     const res = await fetch(gameUrls[i]);
                     const gameEnded = await res.json();
@@ -156,7 +156,7 @@ async function getSchedule() {
             }
             if (seconds < 120 && gameDataArray[i].liveData.linescore.teams.home.goals == gameDataArray[i].liveData.linescore.teams.away.goals) {
                 potentialOTgames.push(gameDataArray[i].gameData.game.pk);
-                bot.channels.cache.get('834170049416790067').send(`The ${gameDataArray[i].liveData.linescore.teams.home.team.name} and the ${gameDataArray[i].liveData.linescore.teams.away.team.name} are currently tied with ${gameDataArray[i].liveData.linescore.currentPeriodTimeRemaining} remaining. Keep an eye out! @everyone`);
+                bot.channels.cache.get('819792691511558184').send(`The ${gameDataArray[i].liveData.linescore.teams.home.team.name} and the ${gameDataArray[i].liveData.linescore.teams.away.team.name} are currently tied with ${gameDataArray[i].liveData.linescore.currentPeriodTimeRemaining} remaining. Keep an eye out! @everyone`);
             }
         }
     }
@@ -170,8 +170,8 @@ bot.on('message', message => {
     if (message.content.includes('React with the emotes below') && message.author.id == '819643466720083989') {
         message.react(message.guild.emojis.cache.find(emoji => emoji.name === nhlmap.get(home)));
         message.react(message.guild.emojis.cache.find(emoji => emoji.name === nhlmap.get(away)));
-        message.react(numbermap.get(1));
-        let minsLeft = 0;
+        message.react(numbermap.get(10));
+        let minsLeft = 9;
         let otTimer = setInterval(() => {
             message.reactions.cache.get(numbermap.get(minsLeft + 1)).remove();
             message.react(numbermap.get(minsLeft));
@@ -297,8 +297,7 @@ async function updateData(numOfUsers, multiplier) {
     let winMap = new Map();
     let loseMap = new Map();
     const allocatedPoints = Math.round(multiplier * numOfUsers / (correct.length - 1) * 10 / 10);
-    console.log(allocatedPoints);
-    bot.channels.cache.get('834170049416790067').send(`The amount of points each winner receieved (not accounting for streak multipliers) is ${allocatedPoints} points! The game went to ${multiplier} OT, so there is a ${multiplier}x multiplier!`);
+    bot.channels.cache.get('819792691511558184').send(`The amount of points each winner receieved (not accounting for streak multipliers) is ${allocatedPoints} points! The game went to ${multiplier} OT, so there is a ${multiplier}x multiplier!`);
 
     correct.forEach(async user => {
         winMap.set(user, 1);
