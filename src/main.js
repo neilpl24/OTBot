@@ -112,13 +112,11 @@ async function getSchedule() {
                 async function getWin() {
                     const res = await fetch(gameUrls[i]);
                     const gameEnded = await res.json();
-                    console.log(gameEnded);
                     // Continues the getWin() function once the game ends.
                     if (gameEnded.gameData.status.abstractGameState == "Final" && otGames.includes(gameEnded.gameData.game.pk)) {
                         clearInterval(over);
                         correct = [];
                         incorrect = [];
-                        console.log(gameEnded);
                         let multiplier = Number(gameEnded.liveData.linescore.periods.length);
                         multiplier -= 3;
                         // Alerts the users to the final score and that their data has been logged.
