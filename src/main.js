@@ -119,7 +119,7 @@ async function getSchedule() {
                         correct = [];
                         incorrect = [];
                         console.log(gameEnded);
-                        let multiplier = Number(gameEnded.liveData.linescore.currentPeriod);
+                        let multiplier = Number(gameEnded.liveData.linescore.periods.length);
                         multiplier -= 3;
                         // Alerts the users to the final score and that their data has been logged.
                         if (gameEnded.liveData.linescore.teams.away.goals >= gameEnded.liveData.linescore.teams.home.goals) {
