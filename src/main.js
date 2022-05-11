@@ -21,7 +21,6 @@ require('dotenv').config();
 const bot = new Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES] });
 
 bot.on('ready', () => {
-    updateData(2, 1);
     console.log("OTBot is live.");
 });
 
@@ -137,8 +136,8 @@ async function getSchedule() {
                                 incorrect.push(user.id);
                             });
 
-                            const multiplier = gameEnded.liveData.linescore.currentPeriod - 3
-                            console.log(multiplier)
+                            const multiplier = gameEnded.liveData.linescore.currentPeriod - 3;
+                            console.log(multiplier);
                             // This number aggregates the total number of voters and removes the bots emote reactions from the vote total.
                             updateData(homeUsers.length + awayUsers.length - 2, multiplier);
                         }
@@ -280,6 +279,7 @@ bot.on('message', message => {
 
 // This function takes our user data and uploads it to the MongoDB server.
 async function updateData(numOfUsers, multiplier) {
+    console.log(multiplier);
     correct.push('819643466720083989', '819643466720083989');
     incorrect.push('819643466720083989')
     // Creates a map for points, wins, and losses each.
@@ -288,7 +288,7 @@ async function updateData(numOfUsers, multiplier) {
     let loseMap = new Map();
     const allocatedPoints = Math.round(multiplier * numOfUsers / (correct.length - 1) * 10 / 10);
     console.log(allocatedPoints);
-    // bot.channels.cache.get('819792691511558184').send(`The amount of points each winner receieved (not accounting for streak multipliers) is ${allocatedPoints} points! The game went to ${multiplier} OT, so there is a ${multiplier}x multiplier!`);
+    bot.channels.cache.get('819792691511558184').send(`The amount of points each winner receieved (not accounting for streak multipliers) is ${allocatedPoints} points! The game went to ${multiplier} OT, so there is a ${multiplier}x multiplier!`);
 
     correct.forEach(async user => {
         winMap.set(user, 1);
