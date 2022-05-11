@@ -289,11 +289,8 @@ async function updateData(numOfUsers, multiplier) {
         if (gameEnded.gameData.status.abstractGameState == "Final" && otGames.includes(gameEnded.gameData.game.pk) && !loggedGames.includes(gameEnded.gameData.game.pk)) {
             loggedGames.push(gameEnded.gameData.game.pk);
             multiplier = Number(gameEnded.liveData.linescore.currentPeriod) - 3;
-            console.log(gameEnded.liveData.linescore.currentPeriod);
         }
     }
-    correct.push('819643466720083989', '819643466720083989');
-    incorrect.push('819643466720083989')
     // Creates a map for points, wins, and losses each.
     let pointsMap = new Map();
     let winMap = new Map();
