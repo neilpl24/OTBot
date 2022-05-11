@@ -108,10 +108,11 @@ async function getSchedule() {
                 // Calls the getWin() function until the game in question has ended.
                 let over = setInterval(function () {
                     getWin()
-                }, 120001);
+                }, 120100);
                 async function getWin() {
                     const res = await fetch(gameUrls[i]);
                     const gameEnded = await res.json();
+                    console.log(gameEnded);
                     // Continues the getWin() function once the game ends.
                     if (gameEnded.gameData.status.abstractGameState == "Final" && otGames.includes(gameEnded.gameData.game.pk)) {
                         clearInterval(over);
