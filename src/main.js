@@ -68,7 +68,7 @@ async function getSchedule() {
     // Scans all NHL games for overtime
     for (let i = 0; i < gameDataArray.length; i++) {
         // This is the channel the bot will send messages in.
-        const channel = bot.channels.cache.get('819792691511558184');
+        const channel = bot.channels.cache.get('834170049416790067');
         // Determines if a game is in overtime or not.
         if ((gameDataArray[i].liveData.linescore.currentPeriod == 3 && gameDataArray[i].liveData.linescore.currentPeriodTimeRemaining == 'END' && gameDataArray[i].liveData.linescore.teams.home.goals == gameDataArray[i].liveData.linescore.teams.away.goals)
             || ((gameDataArray[i].liveData.linescore.currentPeriod == 3 || gameDataArray[i].liveData.linescore.currentPeriod == 4) && gameDataArray[i].liveData.linescore.intermissionInfo.inIntermission) || (gameDataArray[i].liveData.linescore.currentPeriod == 4 && gameDataArray[i].liveData.linescore.currentPeriodTimeRemaining == '05:00') || gameDataArray[i].gamePk == 2021030185) {
@@ -108,7 +108,7 @@ async function getSchedule() {
                 // Calls the getWin() function until the game in question has ended.
                 let over = setInterval(function () {
                     getWin()
-                }, 10000);
+                }, 120001);
                 async function getWin() {
                     const res = await fetch(gameUrls[i]);
                     const gameEnded = await res.json();
