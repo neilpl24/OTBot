@@ -57,14 +57,19 @@ async function getSchedule() {
     let games = schedule.dates[0].games.map(game => game.gamePk);
     games.sort();
     let gameUrls = games.map(gamePk => `https://statsapi.web.nhl.com/api/v1/game/${gamePk}/feed/live?site=en_nhl`);
-    let gameDataArray = [];
-
     // Creates an array of game data json objects 
-    for (let i = 0; i < schedule.totalGames; i++) {
-        const gameResponse = await fetch(gameUrls[i]);
+
+    let gameDataArray = gameUrls.map(async url => {
+        const gameResponse = await fetch(url);
         const gameData = await gameResponse.json();
-        gameDataArray.push(gameData);
-    }
+        return gameData;
+    });
+
+    // for (let i = 0; i < schedule.totalGames; i++) {
+    //     const gameResponse = await fetch(gameUrls[i]);
+    //     const gameData = await gameResponse.json();
+    //     gameDataArray.push(gameData);
+    // }
 
     // Scans all NHL games for overtime
     for (let i = 0; i < gameDataArray.length; i++) {
@@ -82,7 +87,7 @@ async function getSchedule() {
                 const awayTeam = gameDataArray[i].liveData.linescore.teams.away;
                 home = homeTeam.team.name;
                 away = awayTeam.team.name;
-                channel.send(`The ${homeTeam.team.name} take on the ${awayTeam.team.name} in overtime! Who is your pick? You have 10 minutes! React with the emotes below.  @everyone`);
+                channel.send(`The ${homeTeam.team.name} take on the ${awayTeam.team.name} in overtime! Who is your pick? You have 2 minutes! React with the emotes below.  @everyone`);
                 // Fetches the reactions from the OT games after 5 minutes.
                 setTimeout(async () => {
                     const messages = await channel.messages.fetch({ limit: 4 });
@@ -105,7 +110,7 @@ async function getSchedule() {
                             });
                         })
                     });
-                }, 600000);
+                }, 120000);
                 // Calls the getWin() function until the game in question has ended.
                 let over = setInterval(function () {
                     getWin()
@@ -170,8 +175,8 @@ bot.on('message', message => {
     if (message.content.includes('React with the emotes below') && message.author.id == '819643466720083989') {
         message.react(message.guild.emojis.cache.find(emoji => emoji.name === nhlmap.get(home)));
         message.react(message.guild.emojis.cache.find(emoji => emoji.name === nhlmap.get(away)));
-        message.react(numbermap.get(10));
-        let minsLeft = 9;
+        message.react(numbermap.get(2));
+        let minsLeft = 1;
         let otTimer = setInterval(() => {
             message.reactions.cache.get(numbermap.get(minsLeft + 1)).remove();
             message.react(numbermap.get(minsLeft));
