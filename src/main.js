@@ -180,6 +180,7 @@ bot.on('message', message => {
         let otTimer = setInterval(() => {
             message.reactions.cache.get(numbermap.get(minsLeft + 1)).remove();
             message.react(numbermap.get(minsLeft));
+
             minsLeft--;
             if (minsLeft == -1) {
                 clearInterval(otTimer);
