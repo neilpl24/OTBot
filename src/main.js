@@ -58,18 +58,13 @@ async function getSchedule() {
     games.sort();
     let gameUrls = games.map(gamePk => `https://statsapi.web.nhl.com/api/v1/game/${gamePk}/feed/live?site=en_nhl`);
     // Creates an array of game data json objects 
+    gameDataArray = []
 
-    let gameDataArray = gameUrls.map(async url => {
-        const gameResponse = await fetch(url);
+    for (let i = 0; i < schedule.totalGames; i++) {
+        const gameResponse = await fetch(gameUrls[i]);
         const gameData = await gameResponse.json();
-        return gameData;
-    });
-
-    // for (let i = 0; i < schedule.totalGames; i++) {
-    //     const gameResponse = await fetch(gameUrls[i]);
-    //     const gameData = await gameResponse.json();
-    //     gameDataArray.push(gameData);
-    // }
+        gameDataArray.push(gameData);
+    }
 
     // Scans all NHL games for overtime
     for (let i = 0; i < gameDataArray.length; i++) {
