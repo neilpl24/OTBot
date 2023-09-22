@@ -51,7 +51,7 @@ async function getSchedule() {
   const response = await fetch(scheduleUrl);
   const schedule = await response.json();
   // Stops running the function if there's no games that day
-  if (schedule.dates[0] == undefined) {
+  if (schedule.gameWeek[0] == undefined) {
     clearInterval(runBot);
     return;
   }
@@ -243,12 +243,12 @@ bot.on("message", (message) => {
       } else {
         let status = "";
         if (profileData.wins > profileData.losses) {
-          status = "Fuckin champ behavior right here eh.";
+          status = "You're doing great!";
           if (profileData.streak >= 3) {
-            status = "BUDDY IS ON A HEATER BOYS WATCH OUT";
+            status = "Gettin hot!";
           }
         } else {
-          status = "u are so fucking dogwater get it together";
+          status = "You're pretty bad.";
           if (profileData.streak >= 3) {
             status = "ur still ass but keep it up";
           }
@@ -347,7 +347,7 @@ bot.on("message", (message) => {
 async function updateData(numOfUsers, multiplier) {
   const response = await fetch(scheduleUrl);
   const schedule = await response.json();
-  let games = schedule.dates[0].games.map((game) => game.gamePk);
+  let games = schedule.gameWeek[0].games.map((game) => game.gamePk);
   games.sort();
   let gameUrls = games.map(
     (gamePk) =>
@@ -358,12 +358,12 @@ async function updateData(numOfUsers, multiplier) {
     const gameEnded = await res.json();
     // Continues the getWin() function once the game ends.
     if (
-      gameEnded.gameData.status.abstractGameState == "Final" &&
-      otGames.includes(gameEnded.gameData.game.pk) &&
-      !loggedGames.includes(gameEnded.gameData.game.pk)
+      gameEnded.gameState == "OFF" &&
+      otGames.includes(gameEnded.id) &&
+      !loggedGames.includes(gameEnded.id)
     ) {
-      loggedGames.push(gameEnded.gameData.game.pk);
-      multiplier = Number(gameEnded.liveData.linescore.currentPeriod) - 3;
+      loggedGames.push(gameEnded.id);
+      multiplier = Number(gameEnded.period) - 3;
     }
   }
 
