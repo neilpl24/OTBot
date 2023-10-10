@@ -120,7 +120,10 @@ async function getSchedule() {
           const res = await fetch(gameUrls[i]);
           const gameEnded = await res.json();
           // Continues the getWin() function once the game ends.
-          if (gameEnded.gameState == "OFF" && otGames.includes(gameEnded.id)) {
+          if (
+            (gameEnded.gameState == "OVER" || gameEnded.gameState == "OFF") &&
+            otGames.includes(gameEnded.id)
+          ) {
             clearInterval(over);
             correct = [];
             incorrect = [];
@@ -350,8 +353,7 @@ async function updateData(numOfUsers, multiplier) {
   let games = schedule.gameWeek[0].games.map((game) => game.gamePk);
   games.sort();
   let gameUrls = games.map(
-    (gamePk) =>
-      `https://statsapi.web.nhl.com/api/v1/game/${gamePk}/feed/live?site=en_nhl`
+    (gamePk) => `https://api-web.nhle.com/v1/gamecenter/${gamePk}/play-by-play`
   );
   for (let i = 0; i < schedule.totalGames; i++) {
     const res = await fetch(gameUrls[i]);
