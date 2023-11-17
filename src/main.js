@@ -121,7 +121,9 @@ async function getSchedule() {
           const gameEnded = await res.json();
           // Continues the getWin() function once the game ends.
           if (
-            (gameEnded.gameState == "OVER" || gameEnded.gameState == "OFF") &&
+            (gameEnded.gameState == "OVER" ||
+              gameEnded.gameState == "OFF" ||
+              gameEnded.gameState == "FINAL") &&
             otGames.includes(gameEnded.id)
           ) {
             clearInterval(over);
@@ -158,7 +160,7 @@ async function getSchedule() {
     }
     // Shoutout Niko @ https://stackoverflow.com/a/9640417
     // This function notifies users if a game is tied with less than 2 minutes left.
-    let seconds = gameDataArray[i].secondsRemaining;
+    let seconds = gameDataArray[i].clock.secondsRemaining;
     if (
       seconds < 120 &&
       gameDataArray[i].homeTeam.score == gameDataArray[i].awayTeam.score
@@ -167,7 +169,7 @@ async function getSchedule() {
       bot.channels.cache
         .get("895730626504822816")
         .send(
-          `${home} and ${away}} are currently tied with ${gameDataArray[i].timeRemaining} remaining. Keep an eye out! @everyone`
+          `${home} and ${away}} are currently tied with ${gameDataArray[i].clock.timeRemaining} remaining. Keep an eye out! @everyone`
         );
     }
   }
