@@ -53,6 +53,7 @@ async function getSchedule() {
   // Stops running the function if there's no games that day
   if (schedule.gameWeek[0] == undefined) {
     clearInterval(runBot);
+    // leave
     return;
   }
   // Uses the schedule API to get our game IDs to track live data.
