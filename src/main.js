@@ -70,6 +70,8 @@ async function getSchedule() {
     gameDataArray.push(gameData);
   }
 
+  console.log(games, gameDataArray);
+
   // Scans all NHL games for overtime
   for (let i = 0; i < gameDataArray.length; i++) {
     // This is the channel the bot will send messages in.
