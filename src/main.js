@@ -186,13 +186,7 @@ bot.on("message", (message) => {
     message.content.includes("React with the emotes below") &&
     message.author.id == "819643466720083989"
   ) {
-    console.log(
-      nhlmap.get(home),
-      nhlmap.get(away),
-      message.guild.emojis.cache.find(
-        (emoji) => emoji.name === nhlmap.get(home)
-      )
-    );
+    console.log(home, away, nhlmap);
     message.react(
       message.guild.emojis.cache.find(
         (emoji) => emoji.name === nhlmap.get(home)
