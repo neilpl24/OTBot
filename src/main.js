@@ -65,6 +65,7 @@ async function getSchedule() {
   gameDataArray = [];
 
   for (let i = 0; i < schedule.numberOfGames; i++) {
+    console.log(gameUrls[i]);
     const gameResponse = await fetch(gameUrls[i]);
     const gameData = await gameResponse.json();
     gameDataArray.push(gameData);
