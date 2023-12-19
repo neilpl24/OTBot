@@ -50,16 +50,14 @@ let runBot = setInterval(function () {
 async function getSchedule() {
   const response = await fetch(scheduleUrl);
   const schedule = await response.json();
-  console.log(schedule);
   // Stops running the function if there's no games that day
   if (schedule.gameWeek[0] == undefined) {
     clearInterval(runBot);
     return;
   }
   // Uses the schedule API to get our game IDs to track live data.
-  let games = schedule.gameWeek[0].games.map((game) => game.gamePk);
+  let games = schedule.gameWeek[0].games.map((game) => game.id);
   games.sort();
-  console.log(games);
   let gameUrls = games.map(
     (gamePk) => `https://api-web.nhle.com/v1/gamecenter/${gamePk}/play-by-play`
   );
@@ -76,7 +74,6 @@ async function getSchedule() {
   for (let i = 0; i < gameDataArray.length; i++) {
     // This is the channel the bot will send messages in.
     const channel = bot.channels.cache.get("819792691511558184");
-    console.log(gameDataArray[i]);
     // Determines if a game is in overtime or not.
     if (gameDataArray[i].period == 4) {
       // Prevents the bot from sending messages multiple times about overtime.
