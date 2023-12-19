@@ -76,11 +76,7 @@ async function getSchedule() {
     // This is the channel the bot will send messages in.
     const channel = bot.channels.cache.get("819792691511558184");
     // Determines if a game is in overtime or not.
-    if (
-      (gameDataArray[i].period == 4 && gameEnded.gameState == "OVER") ||
-      gameEnded.gameState == "OFF" ||
-      gameEnded.gameState == "FINAL"
-    ) {
+    if (gameDataArray[i].period == 4) {
       // Prevents the bot from sending messages multiple times about overtime.
       if (!otGames.includes(gameDataArray[i].id)) {
         let awayUsers = [];
@@ -190,6 +186,13 @@ bot.on("message", (message) => {
     message.content.includes("React with the emotes below") &&
     message.author.id == "819643466720083989"
   ) {
+    console.log(
+      nhlmap.get(home),
+      nhlmap.get(away),
+      message.guild.emojis.cache.find(
+        (emoji) => emoji.name === nhlmap.get(home)
+      )
+    );
     message.react(
       message.guild.emojis.cache.find(
         (emoji) => emoji.name === nhlmap.get(home)
