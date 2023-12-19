@@ -139,7 +139,7 @@ async function getSchedule() {
             // Alerts the users to the final score and that their data has been logged.
             if (gameEnded.awayTeam.score >= gameEnded.homeTeam.score) {
               channel.send(
-                `The ${away} have beaten the ${home} by a score of ${gameEnded.awayTeam.score} to ${gameEnded.homeTeam.score}! I am now logging everyone's scores. You can check using the records command.`
+                `${away} has beaten ${home} by a score of ${gameEnded.awayTeam.score} to ${gameEnded.homeTeam.score}! I am now logging everyone's scores. You can check using the records command.`
               );
               awayUsers.forEach((user) => {
                 correct.push(user.id);
@@ -150,7 +150,7 @@ async function getSchedule() {
               updateData(homeUsers.length + awayUsers.length - 2);
             } else {
               channel.send(
-                `The ${home} have beaten the ${away} by a score of ${gameEnded.homeTeam.score} to ${gameEnded.awayTeam.score}! I am now logging everyone's scores. You can check using the records command.`
+                `${home} has beaten ${away} by a score of ${gameEnded.homeTeam.score} to ${gameEnded.awayTeam.score}! I am now logging everyone's scores. You can check using the records command.`
               );
               homeUsers.forEach((user) => {
                 correct.push(user.id);
