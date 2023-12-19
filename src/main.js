@@ -76,7 +76,13 @@ async function getSchedule() {
     // This is the channel the bot will send messages in.
     const channel = bot.channels.cache.get("819792691511558184");
     // Determines if a game is in overtime or not.
-    if (gameDataArray[i].period == 4) {
+    if (
+      gameDataArray[i].period == 4 &&
+      (gameDataArray[i].gameState != "OFF" ||
+        gameDataArray[i].gameState != "FINAL" ||
+        gameEnded.gameState != "OVER") &&
+      gameDataArray[i].inIntermission
+    ) {
       // Prevents the bot from sending messages multiple times about overtime.
       if (!otGames.includes(gameDataArray[i].id)) {
         let awayUsers = [];
