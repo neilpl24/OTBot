@@ -50,6 +50,7 @@ let runBot = setInterval(function () {
 async function getSchedule() {
   const response = await fetch(scheduleUrl);
   const schedule = await response.json();
+  console.log(schedule);
   // Stops running the function if there's no games that day
   if (schedule.gameWeek[0] == undefined) {
     clearInterval(runBot);
@@ -58,6 +59,7 @@ async function getSchedule() {
   // Uses the schedule API to get our game IDs to track live data.
   let games = schedule.gameWeek[0].games.map((game) => game.gamePk);
   games.sort();
+  console.log(games);
   let gameUrls = games.map(
     (gamePk) => `https://api-web.nhle.com/v1/gamecenter/${gamePk}/play-by-play`
   );
