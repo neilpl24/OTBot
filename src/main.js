@@ -74,6 +74,7 @@ async function getSchedule() {
   for (let i = 0; i < gameDataArray.length; i++) {
     // This is the channel the bot will send messages in.
     const channel = bot.channels.cache.get("819792691511558184");
+    console.log(gameDataArray[i]);
     // Determines if a game is in overtime or not.
     if (gameDataArray[i].period == 4) {
       // Prevents the bot from sending messages multiple times about overtime.
@@ -163,6 +164,7 @@ async function getSchedule() {
     let seconds = gameDataArray[i].clock.secondsRemaining;
     if (
       seconds < 120 &&
+      gameDataArray[i].period == 4 &&
       gameDataArray[i].homeTeam.score == gameDataArray[i].awayTeam.score
     ) {
       potentialOTgames.push(gameDataArray[i].id);
