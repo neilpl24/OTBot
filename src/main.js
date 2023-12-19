@@ -82,8 +82,8 @@ async function getSchedule() {
         let awayUsers = [];
         let homeUsers = [];
         otGames.push(gameDataArray[i].id);
-        const home = gameDataArray[i].homeTeam.abbrev;
-        const away = gameDataArray[i].awayTeam.abbrev;
+        home = gameDataArray[i].homeTeam.abbrev;
+        away = gameDataArray[i].awayTeam.abbrev;
         channel.send(
           `${home} takes on ${away} in overtime! Who is your pick? You have 5 minutes! React with the emotes below.  @everyone`
         );
