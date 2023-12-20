@@ -171,13 +171,14 @@ async function getSchedule() {
     if (
       seconds < 120 &&
       gameDataArray[i].period == 4 &&
-      gameDataArray[i].homeTeam.score == gameDataArray[i].awayTeam.score
+      gameDataArray[i].homeTeam.score == gameDataArray[i].awayTeam.score &&
+      !potentialOTgames.includes(gameDataArray[i].id)
     ) {
       potentialOTgames.push(gameDataArray[i].id);
       bot.channels.cache
         .get("895730626504822816")
         .send(
-          `${home} and ${away}} are currently tied with ${gameDataArray[i].clock.timeRemaining} remaining. Keep an eye out! @everyone`
+          `${gameDataArray[i].homeTeam.abbrev} and ${gameDataArray[i].homeTeam.abbrev} are currently tied with ${gameDataArray[i].clock.timeRemaining} remaining. Keep an eye out! @everyone`
         );
     }
   }
