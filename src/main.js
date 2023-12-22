@@ -91,7 +91,7 @@ async function getSchedule() {
         home = gameDataArray[i].homeTeam.abbrev;
         away = gameDataArray[i].awayTeam.abbrev;
         channel.send(
-          `${home} takes on ${away} in overtime! Who is your pick? You have 5 minutes! React with the emotes below.  @everyone`
+          `${home} takes on ${away} in overtime! Who is your pick? You have 2 minutes! React with the emotes below.  @everyone`
         );
         // Fetches the reactions from the OT games after 5 minutes.
         setTimeout(async () => {
@@ -118,7 +118,7 @@ async function getSchedule() {
                 });
               });
           });
-        }, 300000);
+        }, 120000);
         // Calls the getWin() function until the game in question has ended.
         let over = setInterval(function () {
           getWin();
@@ -170,7 +170,7 @@ async function getSchedule() {
     let seconds = gameDataArray[i].clock.secondsRemaining;
     if (
       seconds < 120 &&
-      gameDataArray[i].period == 4 &&
+      gameDataArray[i].period == 3 &&
       gameDataArray[i].homeTeam.score == gameDataArray[i].awayTeam.score &&
       !potentialOTgames.includes(gameDataArray[i].id)
     ) {
@@ -178,7 +178,7 @@ async function getSchedule() {
       bot.channels.cache
         .get("895730626504822816")
         .send(
-          `${gameDataArray[i].homeTeam.abbrev} and ${gameDataArray[i].homeTeam.abbrev} are currently tied with ${gameDataArray[i].clock.timeRemaining} remaining. Keep an eye out! @everyone`
+          `${gameDataArray[i].awayTeam.abbrev} and ${gameDataArray[i].homeTeam.abbrev} are currently tied with ${gameDataArray[i].clock.timeRemaining} remaining. Keep an eye out! @everyone`
         );
     }
   }
@@ -204,8 +204,8 @@ bot.on("message", (message) => {
         (emoji) => emoji.name === nhlmap.get(away)
       )
     );
-    message.react(numbermap.get(5));
-    let minsLeft = 4;
+    message.react(numbermap.get(2));
+    let minsLeft = 1;
     let otTimer = setInterval(() => {
       message.reactions.cache.get(numbermap.get(minsLeft + 1)).remove();
       message.react(numbermap.get(minsLeft));
@@ -367,7 +367,7 @@ async function updateData(numOfUsers, multiplier) {
   let gameUrls = games.map(
     (gamePk) => `https://api-web.nhle.com/v1/gamecenter/${gamePk}/play-by-play`
   );
-  for (let i = 0; i < schedule.totalGames; i++) {
+  for (let i = 0; i < gameUrls.length; i++) {
     const res = await fetch(gameUrls[i]);
     const gameEnded = await res.json();
     // Continues the getWin() function once the game ends.
