@@ -81,7 +81,7 @@ async function getSchedule() {
       (gameDataArray[i].gameState != "OFF" ||
         gameDataArray[i].gameState != "FINAL" ||
         gameEnded.gameState != "OVER") &&
-      gameDataArray[i].clock.secondsRemaining == 300
+      gameDataArray[i].clock.inIntermission
     ) {
       // Prevents the bot from sending messages multiple times about overtime.
       if (!otGames.includes(gameDataArray[i].id)) {
@@ -362,7 +362,7 @@ bot.on("message", (message) => {
 async function updateData(numOfUsers, multiplier) {
   const response = await fetch(scheduleUrl);
   const schedule = await response.json();
-  let games = schedule.gameWeek[0].games.map((game) => game.gamePk);
+  let games = schedule.gameWeek[0].games.map((game) => game.id);
   games.sort();
   let gameUrls = games.map(
     (gamePk) => `https://api-web.nhle.com/v1/gamecenter/${gamePk}/play-by-play`
