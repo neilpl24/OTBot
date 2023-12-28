@@ -385,6 +385,7 @@ async function updateData(numOfUsers, multiplier) {
   let pointsMap = new Map();
   let winMap = new Map();
   let loseMap = new Map();
+  console.log(correct, incorrect);
   const allocatedPoints = Math.round(
     (((multiplier * numOfUsers) / (correct.length - 1)) * 10) / 10
   );
