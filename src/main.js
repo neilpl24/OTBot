@@ -110,8 +110,8 @@ async function getSchedule() {
               .users.fetch({ limit: 100 })
               .then((users) => {
                 users.forEach(function (value, key) {
+                  console.log(reaction._emoji.name);
                   if (nhlmap.get(home) == reaction._emoji.name) {
-                    console.log(value);
                     homeUsers.push(value);
                   } else {
                     awayUsers.push(value);
