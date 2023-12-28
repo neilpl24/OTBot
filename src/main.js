@@ -111,6 +111,7 @@ async function getSchedule() {
               .then((users) => {
                 users.forEach(function (value, key) {
                   if (nhlmap.get(home) == reaction._emoji.name) {
+                    console.log(value);
                     homeUsers.push(value);
                   } else {
                     awayUsers.push(value);
