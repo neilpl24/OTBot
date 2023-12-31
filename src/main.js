@@ -172,7 +172,7 @@ async function getSchedule() {
     let seconds = gameDataArray[i].clock.secondsRemaining;
     if (
       seconds < 120 &&
-      gameDataArray[i].period == 3 &&
+      gameDataArray[i].gameState == "CRIT" &&
       gameDataArray[i].homeTeam.score == gameDataArray[i].awayTeam.score &&
       !potentialOTgames.includes(gameDataArray[i].id)
     ) {
