@@ -80,7 +80,7 @@ async function getSchedule() {
       gameDataArray[i].period == 4 &&
       (gameDataArray[i].gameState != "OFF" ||
         gameDataArray[i].gameState != "FINAL" ||
-        gameEnded.gameState != "OVER") &&
+        gameDataArray[i].gameState != "OVER") &&
       gameDataArray[i].clock.inIntermission
     ) {
       // Prevents the bot from sending messages multiple times about overtime.
@@ -148,7 +148,7 @@ async function getSchedule() {
               homeUsers.forEach((user) => {
                 incorrect.push(user.id);
               });
-              updateData(homeUsers.length + awayUsers.length - 2);
+              updateData(homeUsers.length + awayUsers.length - 2, 1);
             } else {
               channel.send(
                 `${home} has beaten ${away} by a score of ${gameEnded.homeTeam.score} to ${gameEnded.awayTeam.score}! I am now logging everyone's scores. You can check using the records command.`
@@ -160,7 +160,7 @@ async function getSchedule() {
                 incorrect.push(user.id);
               });
               // This number aggregates the total number of voters and removes the bots emote reactions from the vote total.
-              updateData(homeUsers.length + awayUsers.length - 2);
+              updateData(homeUsers.length + awayUsers.length - 2, 1);
             }
           }
         }
@@ -372,8 +372,11 @@ async function updateData(numOfUsers, multiplier) {
     const res = await fetch(gameUrls[i]);
     const gameEnded = await res.json();
     // Continues the getWin() function once the game ends.
+
     if (
-      gameEnded.gameState == "OFF" &&
+      (gameEnded.gameState != "OFF" ||
+        gameEnded.gameState != "FINAL" ||
+        gameEnded.gameState != "OVER") &&
       otGames.includes(gameEnded.id) &&
       !loggedGames.includes(gameEnded.id)
     ) {
