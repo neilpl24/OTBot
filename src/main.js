@@ -113,7 +113,7 @@ async function getSchedule() {
                   console.log(reaction._emoji.name);
                   if (nhlmap.get(home) == reaction._emoji.name) {
                     homeUsers.push(value);
-                  } else {
+                  } else if (nhlmap.get(away) == reaction._emoji.name) {
                     awayUsers.push(value);
                   }
                 });
@@ -378,7 +378,7 @@ async function updateData(numOfUsers, multiplier) {
       !loggedGames.includes(gameEnded.id)
     ) {
       loggedGames.push(gameEnded.id);
-      multiplier = Number(gameEnded.period) - 3;
+      multiplier = 1;
     }
   }
 
@@ -386,10 +386,10 @@ async function updateData(numOfUsers, multiplier) {
   let pointsMap = new Map();
   let winMap = new Map();
   let loseMap = new Map();
-  console.log(correct, incorrect);
   const allocatedPoints = Math.round(
     (((multiplier * numOfUsers) / (correct.length - 1)) * 10) / 10
   );
+  console.log(allocatedPoints, multiplier, numOfUsers, correct.length);
   bot.channels.cache
     .get("819792691511558184")
     .send(
