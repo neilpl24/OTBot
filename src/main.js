@@ -82,7 +82,8 @@ async function getSchedule() {
       (gameDataArray[i].gameState != "OFF" ||
         gameDataArray[i].gameState != "FINAL" ||
         gameDataArray[i].gameState != "OVER") &&
-      gameDataArray[i].clock.inIntermission
+      gameDataArray[i].clock.inIntermission &&
+      gameDataArray[i].homeTeam.score == gameDataArray.awayTeam.score
     ) {
       // Prevents the bot from sending messages multiple times about overtime.
       if (!otGames.includes(gameDataArray[i].id)) {
