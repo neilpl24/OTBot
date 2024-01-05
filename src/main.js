@@ -81,7 +81,8 @@ async function getSchedule() {
     }
 
     if (
-      gameDataArray[i].periodDescriptor.periodType == "OT" ||
+      (gameDataArray[i].periodDescriptor.periodType == "OT" &&
+        gameDataArray[i].gameState == "CRIT") ||
       (gameDataArray[i].gameState == "CRIT" &&
         gameDataArray[i].period >= 3 &&
         gameDataArray.inIntermission &&
