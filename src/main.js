@@ -96,9 +96,9 @@ async function getSchedule() {
         home = gameDataArray[i].homeTeam.abbrev;
         away = gameDataArray[i].awayTeam.abbrev;
         channel.send(
-          `${home} takes on ${away} in overtime! Who is your pick? You have 2 minutes! React with the emotes below.  @everyone`
+          `${home} takes on ${away} in overtime! Who is your pick? You have 10 minutes! React with the emotes below.  @everyone`
         );
-        // Fetches the reactions from the OT games after 5 minutes.
+        // Fetches the reactions from the OT games after 10 minutes.
         setTimeout(async () => {
           const messages = await channel.messages.fetch({ limit: 4 });
           let homeID;
@@ -124,7 +124,7 @@ async function getSchedule() {
                 });
               });
           });
-        }, 120000);
+        }, 600000);
         // Calls the getWin() function until the game in question has ended.
         let over = setInterval(function () {
           getWin();
@@ -211,8 +211,8 @@ bot.on("message", (message) => {
         (emoji) => emoji.name === nhlmap.get(away)
       )
     );
-    message.react(numbermap.get(2));
-    let minsLeft = 1;
+    message.react(numbermap.get(10));
+    let minsLeft = 9;
     let otTimer = setInterval(() => {
       message.reactions.cache.get(numbermap.get(minsLeft + 1)).remove();
       message.react(numbermap.get(minsLeft));
