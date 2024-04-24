@@ -23,6 +23,7 @@ const bot = new Client({
   intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES],
 });
 
+
 bot.on("ready", () => {
   console.log("OTBot is live.");
 });
