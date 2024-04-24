@@ -81,6 +81,8 @@ async function getSchedule() {
       continue;
     }
 
+    console.log(gameDataArray[i]);
+
     if (
       (gameDataArray[i].periodDescriptor.periodType == "OT" &&
         gameDataArray[i].gameState == "CRIT") ||
