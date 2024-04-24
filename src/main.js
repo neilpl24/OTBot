@@ -86,7 +86,7 @@ async function getSchedule() {
         gameDataArray[i].gameState == "CRIT") ||
       (gameDataArray[i].gameState == "CRIT" &&
         gameDataArray[i].period >= 3 &&
-        gameDataArray.otInUse  &&
+        gameDataArray[i].otInUse  &&
         gameDataArray[i].homeTeam.score == gameDataArray.awayTeam.score)
     ) {
       // Prevents the bot from sending messages multiple times about overtime.
