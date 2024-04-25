@@ -82,12 +82,7 @@ async function getSchedule() {
     }
 
     if (
-      (gameDataArray[i].periodDescriptor.periodType == "OT" &&
-        gameDataArray[i].gameState == "CRIT") ||
-      (gameDataArray[i].gameState == "CRIT" &&
-        gameDataArray[i].period >= 3 &&
-        gameDataArray[i].otInUse  &&
-        gameDataArray[i].homeTeam.score == gameDataArray.awayTeam.score)
+        gameDataArray[i].otInUse)
     ) {
       // Prevents the bot from sending messages multiple times about overtime.
       if (!otGames.includes(gameDataArray[i].id)) {
