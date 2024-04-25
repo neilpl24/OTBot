@@ -82,7 +82,7 @@ async function getSchedule() {
     }
 
     if (
-        gameDataArray[i].otInUse)
+        gameDataArray[i].otInUse
     ) {
       // Prevents the bot from sending messages multiple times about overtime.
       if (!otGames.includes(gameDataArray[i].id)) {
