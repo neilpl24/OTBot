@@ -90,8 +90,10 @@ secondsRemaining == 0 &&
         gameDataArray[i].gameState == "CRIT") ||
       (gameDataArray[i].gameState == "CRIT" &&
         gameDataArray[i].
-periodDescriptor.number >= 4 &&
+periodDescriptor.number >= 3 &&
         gameDataArray[i].otInUse  &&
+       gameDataArray[i].clock.
+inIntermission &&
         gameDataArray[i].homeTeam.score == gameDataArray[i].awayTeam.score)
     ) {
       // Prevents the bot from sending messages multiple times about overtime.
