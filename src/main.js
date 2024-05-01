@@ -86,7 +86,7 @@ async function getSchedule() {
         gameDataArray[i].gameState == "CRIT") ||
       (gameDataArray[i].gameState == "CRIT" &&
         gameDataArray[i].
-periodDescriptor.number >= 3 &&
+periodDescriptor.number >= 4 &&
         gameDataArray[i].otInUse  &&
         gameDataArray[i].homeTeam.score == gameDataArray[i].awayTeam.score)
     ) {
