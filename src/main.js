@@ -23,7 +23,6 @@ const bot = new Client({
   intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES],
 });
 
-
 bot.on("ready", () => {
   console.log("OTBot is live.");
 });
@@ -81,20 +80,13 @@ async function getSchedule() {
       continue;
     }
 
+    console.log(gameDataArray[i]);
+
     if (
-      (gameDataArray[i].
-periodDescriptor.number == 3 &&
-       gameDataArray[i].
-clock.
-secondsRemaining == 0 &&
-        gameDataArray[i].gameState == "CRIT") ||
-      (gameDataArray[i].gameState == "CRIT" &&
-        gameDataArray[i].
-periodDescriptor.number >= 3 &&
-        gameDataArray[i].otInUse  &&
-       gameDataArray[i].clock.
-inIntermission &&
-        gameDataArray[i].homeTeam.score == gameDataArray[i].awayTeam.score)
+      gameDataArray[i].gameState == "CRIT" &&
+      gameDataArray[i].period >= 3 &&
+      gameDataArray.otInUse &&
+      gameDataArray[i].homeTeam.score == gameDataArray.awayTeam.score
     ) {
       // Prevents the bot from sending messages multiple times about overtime.
       if (!otGames.includes(gameDataArray[i].id)) {
@@ -104,9 +96,9 @@ inIntermission &&
         home = gameDataArray[i].homeTeam.abbrev;
         away = gameDataArray[i].awayTeam.abbrev;
         channel.send(
-          `${home} takes on ${away} in overtime! Who is your pick? You have 10 minutes! React with the emotes below.  @everyone`
+          `${home} takes on ${away} in overtime! Who is your pick? You have 2 minutes! React with the emotes below.  @everyone`
         );
-        // Fetches the reactions from the OT games after 10 minutes.
+        // Fetches the reactions from the OT games after 2 minutes.
         setTimeout(async () => {
           const messages = await channel.messages.fetch({ limit: 4 });
           let homeID;
@@ -132,7 +124,7 @@ inIntermission &&
                 });
               });
           });
-        }, 600000);
+        }, 120000);
         // Calls the getWin() function until the game in question has ended.
         let over = setInterval(function () {
           getWin();
@@ -219,8 +211,8 @@ bot.on("message", (message) => {
         (emoji) => emoji.name === nhlmap.get(away)
       )
     );
-    message.react(numbermap.get(10));
-    let minsLeft = 9;
+    message.react(numbermap.get(2));
+    let minsLeft = 1;
     let otTimer = setInterval(() => {
       message.reactions.cache.get(numbermap.get(minsLeft + 1)).remove();
       message.react(numbermap.get(minsLeft));
