@@ -173,6 +173,7 @@ async function getSchedule() {
     // Shoutout Niko @ https://stackoverflow.com/a/9640417
     // This function notifies users if a game is tied with less than 2 minutes left.
     let seconds = gameDataArray[i].clock.secondsRemaining;
+    console.log(seconds)
     if (
       seconds < 120 &&
       gameDataArray[i].gameState == "CRIT" &&
