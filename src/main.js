@@ -80,7 +80,6 @@ async function getSchedule() {
       continue;
     }
 
-    console.log(gameDataArray[i]);
 
     if (
       gameDataArray[i].gameState == "CRIT" &&
