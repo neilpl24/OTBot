@@ -83,7 +83,7 @@ async function getSchedule() {
 
     if (
       gameDataArray[i].gameState == "CRIT" &&
-      gameDataArray[i].period >= 3 &&
+      gameDataArray[i].displayPeriod >= 3 &&
       gameDataArray.otInUse &&
       gameDataArray[i].homeTeam.score == gameDataArray.awayTeam.score
     ) {
@@ -177,7 +177,7 @@ async function getSchedule() {
     if (
       seconds < 120 &&
       gameDataArray[i].gameState == "CRIT" &&
-      gameDataArray[i].period == 3 &&
+      gameDataArray[i].displayPeriod == 3 &&
       gameDataArray[i].homeTeam.score == gameDataArray[i].awayTeam.score &&
       !potentialOTgames.includes(gameDataArray[i].id)
     ) {
