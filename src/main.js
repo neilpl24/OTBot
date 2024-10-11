@@ -80,7 +80,11 @@ async function getSchedule() {
       continue;
     }
 
-
+    console.log( gameDataArray[i].gameState == "CRIT",
+      gameDataArray[i].displayPeriod >= 3,
+      gameDataArray.otInUse ,
+      gameDataArray[i].homeTeam.score == gameDataArray.awayTeam.score
+                )
     if (
       gameDataArray[i].gameState == "CRIT" &&
       gameDataArray[i].displayPeriod >= 3 &&
