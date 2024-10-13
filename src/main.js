@@ -80,9 +80,11 @@ async function getSchedule() {
       continue;
     }
 
+    let seconds = gameDataArray[i].clock.secondsRemaining;
+
     if (
       gameDataArray[i].gameState == "CRIT" &&
-      gameDataArray[i].displayPeriod >= 3 &&
+      (gameDataArray[i].displayPeriod == 3 && seconds < 5) || (gameDataArray[i].displayPeriod == 4) &&
       gameDataArray[i].otInUse &&
       gameDataArray[i].homeTeam.score == gameDataArray[i].awayTeam.score
     ) {
@@ -171,7 +173,6 @@ async function getSchedule() {
     }
     // Shoutout Niko @ https://stackoverflow.com/a/9640417
     // This function notifies users if a game is tied with less than 2 minutes left.
-    let seconds = gameDataArray[i].clock.secondsRemaining;
 
     if (
       seconds < 120 &&
